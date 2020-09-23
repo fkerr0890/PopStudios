@@ -13,10 +13,10 @@
         android:layout_marginStart="96dp"
         android:layout_marginLeft="96dp"
         android:layout_marginTop="344dp"
+        android:autofillHints="@string/goal_input_label"
         android:ems="10"
+        android:hint="@string/goal_input_label"
         android:inputType="text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:hint="@string/goal_input_label"
-        android:autofillHints="@string/goal_input_label" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
