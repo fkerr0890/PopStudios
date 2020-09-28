@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="660dp"
         android:fontFamily="sans-serif-condensed-medium"
-        android:text="App Name"
+        android:text="@string/main_activity_title"
         android:textColor="#28E1CB"
         android:textColorLink="#28E1CB"
         android:textSize="28sp"
