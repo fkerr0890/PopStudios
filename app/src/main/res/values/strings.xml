@@ -2,4 +2,5 @@
     <string name="app_name">PopStudios</string>
     <string name="goal_input_label">Goal name</string>
     <string name="fab_addGoal_content_desc">Add a new goal</string>
+    <string name="goal_importance">Goal Importance:</string>
 </resources>
