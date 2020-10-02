@@ -2,7 +2,9 @@ package com.example.popstudios;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -50,5 +52,10 @@ public class InputActivity extends AppCompatActivity {
             });
         }
 
+    }
+
+    public void startMainActivity(View view) {
+        Intent mainActivityIntent = new Intent(this,MainActivity.class);
+        startActivity(mainActivityIntent);
     }
 }
