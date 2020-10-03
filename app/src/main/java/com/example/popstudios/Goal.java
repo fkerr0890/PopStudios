@@ -34,7 +34,7 @@ public class Goal {
         return (this.goalImportance + this.goalDifficulty) * 20;
     }
 
-    public int calculateColor(Goal goal){
+    public int calculateColor(){
         int color11 = Color.argb(255, 116, 0, 184);
         int color10 = Color.argb(255, 110, 23, 190);
         int color9 = Color.argb(255, 105, 48, 195);
