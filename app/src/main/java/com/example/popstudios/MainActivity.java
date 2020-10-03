@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnLongClickListener {
     private int numBubbles;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,5 +90,13 @@ public class MainActivity extends AppCompatActivity {
     public void startInputActivity(View view) {
         Intent inputActivityIntent = new Intent(this,InputActivity.class);
         startActivity(inputActivityIntent);
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch(v.getId()){
+            
+        }
+        return false;
     }
 }
