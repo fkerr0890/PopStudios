@@ -58,13 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE));
             int goalDifficulty = cursor.getInt(
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY));
-            Goal newGoal = new Goal();
-            //remove this after adding goal costructor
-            newGoal.name = goalName;
-            newGoal.goalDifficulty = goalDifficulty;
-            newGoal.goalImportance = goalImportance;
+            Goal newGoal = new Goal(goalName, goalImportance, goalDifficulty);
             goals.add(newGoal);
-
         }
         cursor.close();
         addBubble(goals);
@@ -78,8 +73,6 @@ public class MainActivity extends AppCompatActivity {
             bubble.setX(new Random().nextInt(400));   //randomize location of bubble
             bubble.setY(new Random().nextInt(400));
             constraintLayout.addView(bubble);
-            Log.v("What's up",bubble.getWidth()+","+bubble.getHeight());
-            Log.v("What's up",bubble.getMeasuredWidth()+","+bubble.getMeasuredHeight());
         }
 
 /*
@@ -91,8 +84,7 @@ public class MainActivity extends AppCompatActivity {
         set.constrainWidth(bubble.getId(),ConstraintSet.WRAP_CONTENT);
         set.constrainHeight(bubble.getId(),ConstraintSet.WRAP_CONTENT);
         set.applyTo(constraintLayout);*/
-//        Log.v("What's up",bubble.getWidth()+","+bubble.getHeight());
-//        Log.v("What's up",bubble.getMeasuredWidth()+","+bubble.getMeasuredHeight());
+
     }
 
     public void startInputActivity(View view) {
