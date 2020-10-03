@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     @Override
     public boolean onLongClick(View v) {
         switch(v.getId()){
-            
+
         }
         return false;
     }
