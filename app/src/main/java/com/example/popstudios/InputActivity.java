@@ -25,10 +25,10 @@ public class InputActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input);
 
-        editGoal = (EditText)findViewById(R.id.editGoal);
-        inputAddBttn = (Button)findViewById(R.id.inputAddBtn);
-        importanceBar = (SeekBar)findViewById(R.id.importanceBar);
-        difficultyBar = (SeekBar)findViewById(R.id.difficultyBar);
+        editGoal = findViewById(R.id.editGoal);
+        inputAddBttn = findViewById(R.id.inputAddBtn);
+        importanceBar = findViewById(R.id.importanceBar);
+        difficultyBar = findViewById(R.id.difficultyBar);
 
         if (importanceBar != null) {
             importanceBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -63,36 +63,33 @@ public class InputActivity extends AppCompatActivity {
             });
         }
 
-        inputAddBttn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goalName = editGoal.getText().toString();
-                goalImportanceNum = importanceBar.getProgress();
-                goalDifficultyNum = difficultyBar.getProgress();
-
-                if (goalName.isEmpty()){
-                    Toast.makeText(InputActivity.this, "Please name your goal",Toast.LENGTH_SHORT).show();
-                }
-                FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(v.getContext());
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-// Create a new map of values, where column names are the keys
-                ContentValues values = new ContentValues();
-                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME, goalName);
-                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
-                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
-
-
-// Insert the new row, returning the primary key value of the new row
-                long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
-            }
-
-        });
-
     }
 
     public void startMainActivity(View view) {
+        writeSql(view);
         Intent mainActivityIntent = new Intent(this,MainActivity.class);
         startActivity(mainActivityIntent);
+    }
+
+    private void writeSql(View view) {
+        goalName = editGoal.getText().toString();
+        goalImportanceNum = importanceBar.getProgress();
+        goalDifficultyNum = difficultyBar.getProgress();
+
+        if (goalName.isEmpty()){
+            Toast.makeText(InputActivity.this, "Please name your goal",Toast.LENGTH_SHORT).show();
+        }
+        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(view.getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+// Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME, goalName);
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
+
+
+// Insert the new row, returning the primary key value of the new row
+        long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
     }
 }
