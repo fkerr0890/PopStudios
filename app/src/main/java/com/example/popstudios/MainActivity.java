@@ -6,18 +6,44 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener {
+    private static final String TAG = "MyActivity";
+
+    View.OnLongClickListener listener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            // this is where I try to get the button ID, I think this will be useful if we
+            // want to delete all info attached to the button from the data table?
+            int buttonId = v.getId();
+            System.out.println("DID THIS WORK? HERE IS THE ID" + buttonId);
+
+            // this makes it disappear but doesn't delete it
+            // v.setVisibility(View.GONE);
+
+            // gets the ViewGroup (essentially the layout that the button is from) and
+            // removes it (still comes back, but that is related to the data table, I believe)
+            ViewGroup parentView = (ViewGroup) v.getParent();
+            parentView.removeView(v);
+            return true;
+        }
+    };
+
     private int numBubbles;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             bubble.setBackgroundColor(goal.calculateColor());
             bubble.setX(new Random().nextInt(400));   //randomize location of bubble
             bubble.setY(new Random().nextInt(400));
+            bubble.setOnLongClickListener(listener);
             relativeLayout.addView(bubble);
         }
 
@@ -93,9 +120,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
     @Override
     public boolean onLongClick(View v) {
-        switch(v.getId()){
-
-        }
         return false;
     }
 }
