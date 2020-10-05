@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.nfc.Tag;
@@ -11,12 +12,14 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.widget.RelativeLayout;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -97,6 +100,28 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             bubble.setX(new Random().nextInt(400));   //randomize location of bubble
             bubble.setY(new Random().nextInt(400));
             bubble.setOnLongClickListener(listener);
+            relativeLayout.addView(bubble);
+        }
+
+/*
+        ConstraintSet set = new ConstraintSet();
+        set.clone(constraintLayout);
+        // connect start and end point of views, in this case top of child to top of parent.
+
+        set.connect(bubble.getId(), ConstraintSet.TOP, bubble.getId(), ConstraintSet.TOP, 60);
+        set.constrainWidth(bubble.getId(),ConstraintSet.WRAP_CONTENT);
+        set.constrainHeight(bubble.getId(),ConstraintSet.WRAP_CONTENT);
+        set.applyTo(constraintLayout);*/
+
+    private void addBubble(List<Goal> goalList) {
+        for (Goal goal: goalList){
+            RelativeLayout relativeLayout = findViewById(R.id.bubble_layout);
+            View bubble = LayoutInflater.from(this).inflate(R.layout.bubble,null);
+            bubble.setId(numBubbles);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                bubble.setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
+            bubble.setX(new Random().nextInt(300));   //randomize location of bubble
+            bubble.setY(new Random().nextInt(300));
             relativeLayout.addView(bubble);
         }
 
