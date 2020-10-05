@@ -36,8 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             // this makes it disappear but doesn't delete it
             // v.setVisibility(View.GONE);
 
-            // gets the ViewGroup (essentially the layout that the button is from) and
-            // removes it (still comes back, but that is related to the data table, I believe)
+            // gets the ViewGroup (essentially the layout that the button is from) by ca
             ViewGroup parentView = (ViewGroup) v.getParent();
             parentView.removeView(v);
             return true;
