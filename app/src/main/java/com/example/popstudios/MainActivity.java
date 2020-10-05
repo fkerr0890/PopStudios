@@ -8,6 +8,7 @@ import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -91,18 +92,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         addBubble(goals);
     }
 
-    private void addBubble(List<Goal> goalList) {
-        for (Goal goal: goalList){
-            RelativeLayout relativeLayout = findViewById(R.id.bubble_layout);
-            View bubble = LayoutInflater.from(this).inflate(R.layout.bubble,null);
-            bubble.setId(numBubbles);
-            bubble.setBackgroundColor(goal.calculateColor());
-            bubble.setX(new Random().nextInt(400));   //randomize location of bubble
-            bubble.setY(new Random().nextInt(400));
-            bubble.setOnLongClickListener(listener);
-            relativeLayout.addView(bubble);
-        }
-
 /*
         ConstraintSet set = new ConstraintSet();
         set.clone(constraintLayout);
@@ -114,17 +103,18 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         set.applyTo(constraintLayout);*/
 
     private void addBubble(List<Goal> goalList) {
-        for (Goal goal: goalList){
+        for (Goal goal : goalList) {
             RelativeLayout relativeLayout = findViewById(R.id.bubble_layout);
-            View bubble = LayoutInflater.from(this).inflate(R.layout.bubble,null);
+            View bubble = LayoutInflater.from(this).inflate(R.layout.bubble, null);
             bubble.setId(numBubbles);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                 bubble.setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
             bubble.setX(new Random().nextInt(300));   //randomize location of bubble
             bubble.setY(new Random().nextInt(300));
+            bubble.setOnLongClickListener(listener);
             relativeLayout.addView(bubble);
         }
-
+    }
 /*
         ConstraintSet set = new ConstraintSet();
         set.clone(constraintLayout);
@@ -134,8 +124,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         set.constrainWidth(bubble.getId(),ConstraintSet.WRAP_CONTENT);
         set.constrainHeight(bubble.getId(),ConstraintSet.WRAP_CONTENT);
         set.applyTo(constraintLayout);*/
-
-    }
 
     public void startInputActivity(View view) {
         Intent inputActivityIntent = new Intent(this,InputActivity.class);
