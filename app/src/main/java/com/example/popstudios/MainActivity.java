@@ -1,28 +1,29 @@
 package com.example.popstudios;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.RelativeLayout;
+
+import com.example.popstudios.databinding.ActivityMainBinding;
+import com.example.popstudios.databinding.BubbleBinding;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     private int numBubbles;
+    private ActivityMainBinding main;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        main = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(main.getRoot());
         numBubbles = 0;
 
 //        Reads database
@@ -48,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
         List<Goal> goals = new LinkedList<>();
         while(cursor.moveToNext()) {
-//            long itemId = cursor.getLong(
-//                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry._ID));
             String goalName = cursor.getString(
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME));
             int goalImportance = cursor.getInt(
@@ -60,30 +59,17 @@ public class MainActivity extends AppCompatActivity {
             goals.add(newGoal);
         }
         cursor.close();
-        addBubble(goals);
+//        for (Goal goal : goals) {
+//            addBubble(goal);
+//        }
+        addBubble(goals.get(0)); // temporary
     }
 
-    private void addBubble(List<Goal> goalList) {
-        for (Goal goal: goalList){
-            RelativeLayout relativeLayout = findViewById(R.id.bubble_layout);
-            View bubble = LayoutInflater.from(this).inflate(R.layout.bubble,null);
-            bubble.setId(numBubbles);
-            bubble.setBackgroundColor(goal.calculateColor());
-            bubble.setX(new Random().nextInt(400));   //randomize location of bubble
-            bubble.setY(new Random().nextInt(400));
-            relativeLayout.addView(bubble);
-        }
-
-/*
-        ConstraintSet set = new ConstraintSet();
-        set.clone(constraintLayout);
-        // connect start and end point of views, in this case top of child to top of parent.
-
-        set.connect(bubble.getId(), ConstraintSet.TOP, bubble.getId(), ConstraintSet.TOP, 60);
-        set.constrainWidth(bubble.getId(),ConstraintSet.WRAP_CONTENT);
-        set.constrainHeight(bubble.getId(),ConstraintSet.WRAP_CONTENT);
-        set.applyTo(constraintLayout);*/
-
+    private void addBubble(Goal goal) {
+        View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
+        bubble.setId(numBubbles);
+        System.out.println(bubble.getLayoutParams());
+        main.bubbleLayout.addView(bubble);
     }
 
     public void startInputActivity(View view) {
