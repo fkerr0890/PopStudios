@@ -1,26 +1,23 @@
 package com.example.popstudios;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.RelativeLayout;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import android.widget.RelativeLayout;
+import com.example.popstudios.databinding.ActivityMainBinding;
+import com.example.popstudios.databinding.BubbleBinding;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +25,8 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener {
     private static final String TAG = "MyActivity";
+    ActivityMainBinding main;
+    private int numBubbles;
 
     View.OnLongClickListener listener = new View.OnLongClickListener() {
         @Override
@@ -47,10 +46,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         }
     };
 
-    private int numBubbles;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        main = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(R.layout.activity_main);
         numBubbles = 0;
 
@@ -89,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             goals.add(newGoal);
         }
         cursor.close();
-        addBubble(goals);
+        addBubbles(goals);
+//        addSingleBubble();
     }
 
 /*
@@ -102,9 +102,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         set.constrainHeight(bubble.getId(),ConstraintSet.WRAP_CONTENT);
         set.applyTo(constraintLayout);*/
 
-    private void addBubble(List<Goal> goalList) {
+    @SuppressLint("InflateParams")
+    private void addBubbles(List<Goal> goalList) {
         for (Goal goal : goalList) {
-            RelativeLayout relativeLayout = findViewById(R.id.bubble_layout);
+            CoordinatorLayout coordinatorLayout = findViewById(R.id.bubble_layout);
             View bubble = LayoutInflater.from(this).inflate(R.layout.bubble, null);
             bubble.setId(numBubbles);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             bubble.setX(new Random().nextInt(300));   //randomize location of bubble
             bubble.setY(new Random().nextInt(300));
             bubble.setOnLongClickListener(listener);
-            relativeLayout.addView(bubble);
+            coordinatorLayout.addView(bubble);
         }
     }
 /*
@@ -124,6 +125,16 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         set.constrainWidth(bubble.getId(),ConstraintSet.WRAP_CONTENT);
         set.constrainHeight(bubble.getId(),ConstraintSet.WRAP_CONTENT);
         set.applyTo(constraintLayout);*/
+
+    private void addSingleBubble() {
+        View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
+        bubble.setId(numBubbles);
+        bubble.setLayoutParams(new CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+                CoordinatorLayout.LayoutParams.WRAP_CONTENT));
+        ((CoordinatorLayout.LayoutParams) bubble.getLayoutParams()).gravity = Gravity.CENTER;
+        main.bubbleLayout.addView(bubble);
+    }
 
     public void startInputActivity(View view) {
         Intent inputActivityIntent = new Intent(this,InputActivity.class);
