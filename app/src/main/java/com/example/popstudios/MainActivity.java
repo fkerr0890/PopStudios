@@ -7,18 +7,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -27,19 +21,16 @@ import com.example.popstudios.databinding.ActivityMainBinding;
 import com.example.popstudios.databinding.BubbleBinding;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener {
     private static final String TAG = "MyActivity";
     ActivityMainBinding main;
-    private int numBubbles;
     FeedReaderDbHelper dbHelper;
     private Animator currentAnimator;
     private int shortAnimationDuration;
     private List<Integer> listOfExpandedBubbles;
-
     View.OnLongClickListener listener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
@@ -64,45 +55,34 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         main = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(R.layout.activity_main);
-        numBubbles = 0;
+        setContentView(main.getRoot());
         listOfExpandedBubbles = new ArrayList<>();
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
         dbHelper = new FeedReaderDbHelper(this);
         List<Goal> goals = dbHelper.getGoalsFromDb();
-        addBubbles(goals);
-        //addSingleBubble();
+        layoutBubbles(goals);
     }
 
-    @SuppressLint("InflateParams")
-    private void addBubbles(List<Goal> goalList) {
+    private void layoutBubbles(List<Goal> goalList) {
         for (Goal goal : goalList) {
-            CoordinatorLayout coordinatorLayout = findViewById(R.id.bubble_layout);
-            View bubble = LayoutInflater.from(this).inflate(R.layout.bubble, null);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                bubble.setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
+            View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
+            bubble.setLayoutParams(new CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT));
+            ((CoordinatorLayout.LayoutParams) bubble.getLayoutParams()).gravity = Gravity.CENTER;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) bubble
+                    .setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
             bubble.setId((int) goal.getGoalID());
-            bubble.setX(new Random().nextInt(1000));   //randomize location of bubble
-            bubble.setY(new Random().nextInt(1000));
+            bubble.setX(new Random().nextInt(300));   //randomize location of bubble
+            bubble.setY(new Random().nextInt(300));
             bubble.setOnLongClickListener(listener);
-            coordinatorLayout.addView(bubble);
+            main.bubbleLayout.addView(bubble);
         }
-    }
-
-
-    private void addSingleBubble() {
-        View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
-        bubble.setLayoutParams(new CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.WRAP_CONTENT,
-                CoordinatorLayout.LayoutParams.WRAP_CONTENT));
-        ((CoordinatorLayout.LayoutParams) bubble.getLayoutParams()).gravity = Gravity.CENTER;
-        main.bubbleLayout.addView(bubble);
     }
 
     public void startInputActivity(View view) {
