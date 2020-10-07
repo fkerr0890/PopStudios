@@ -102,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         if (currentAnimator != null)
             currentAnimator.cancel();
 
+
+
         // Set the pivot point for SCALE_X and SCALE_Y transformations
         // to the top-left corner of the zoomed-in view (the default
         // is the center of the view).
