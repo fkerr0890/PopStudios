@@ -27,14 +27,14 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private static final String TAG = "MyActivity";
     ActivityMainBinding main;
     private int numBubbles;
+    FeedReaderDbHelper dbHelper;
 
     View.OnLongClickListener listener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            // this is where I try to get the button ID, I think this will be useful if we
-            // want to delete all info attached to the button from the data table?
             int buttonId = v.getId();
-            System.out.println("DID THIS WORK? HERE IS THE ID" + buttonId);
+            System.out.println(buttonId);
+            this.deleteGoal(buttonId);
 
             // this makes it disappear but doesn't delete it
             // v.setVisibility(View.GONE);
@@ -42,9 +42,17 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             // gets the ViewGroup (essentially the layout that the button is from) by ca
             ViewGroup parentView = (ViewGroup) v.getParent();
             parentView.removeView(v);
+
             return true;
         }
+
+        private void deleteGoal(int buttonID) {
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            String selection = FeedReaderContract.FeedEntry._ID + " = " + (long)buttonID;
+            db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, null);
+        }
     };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,41 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         setContentView(R.layout.activity_main);
         numBubbles = 0;
 
-//        Reads database
-        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String[] projection = {
-                BaseColumns._ID,
-                FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME,
-                FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE,
-                FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY
-        };
-
-
-        Cursor cursor = db.query(
-                FeedReaderContract.FeedEntry.TABLE_NAME,
-                projection,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-
-        List<Goal> goals = new LinkedList<>();
-        while(cursor.moveToNext()) {
-//            long itemId = cursor.getLong(
-//                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry._ID));
-            String goalName = cursor.getString(
-                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME));
-            int goalImportance = cursor.getInt(
-                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE));
-            int goalDifficulty = cursor.getInt(
-                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY));
-            Goal newGoal = new Goal(goalName, goalImportance, goalDifficulty);
-            goals.add(newGoal);
-        }
-        cursor.close();
+        dbHelper = new FeedReaderDbHelper(this);
+        List<Goal> goals = dbHelper.getGoalsFromDb();
         addBubbles(goals);
 //        addSingleBubble();
     }
@@ -107,9 +82,9 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         for (Goal goal : goalList) {
             CoordinatorLayout coordinatorLayout = findViewById(R.id.bubble_layout);
             View bubble = LayoutInflater.from(this).inflate(R.layout.bubble, null);
-            bubble.setId(numBubbles);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                 bubble.setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
+            bubble.setId((int) goal.getGoalID());
             bubble.setX(new Random().nextInt(300));   //randomize location of bubble
             bubble.setY(new Random().nextInt(300));
             bubble.setOnLongClickListener(listener);
@@ -128,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
     private void addSingleBubble() {
         View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
-        bubble.setId(numBubbles);
         bubble.setLayoutParams(new CoordinatorLayout.LayoutParams(
                 CoordinatorLayout.LayoutParams.WRAP_CONTENT,
                 CoordinatorLayout.LayoutParams.WRAP_CONTENT));

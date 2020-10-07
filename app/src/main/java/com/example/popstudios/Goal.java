@@ -10,13 +10,17 @@ public class Goal {
     public String name;
     public int goalImportance;
     public int goalDifficulty;
+    public long id;
     public List<Integer> colorList;
 
-    Goal(String name, int goalImportance, int goalDifficulty){
+    Goal(long id, String name, int goalImportance, int goalDifficulty){
+        this.id = id;
         this.name = name;
         this.goalImportance = goalImportance;
         this.goalDifficulty = goalDifficulty;
     }
+
+    public long getGoalID(){return id;}
 
     public String getName(){
         return name;
