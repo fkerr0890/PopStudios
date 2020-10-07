@@ -71,15 +71,18 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private void layoutBubbles(List<Goal> goalList) {
         for (Goal goal : goalList) {
             View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
-            bubble.setLayoutParams(new CoordinatorLayout.LayoutParams(
+            CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
                     CoordinatorLayout.LayoutParams.WRAP_CONTENT,
-                    CoordinatorLayout.LayoutParams.WRAP_CONTENT));
-            ((CoordinatorLayout.LayoutParams) bubble.getLayoutParams()).gravity = Gravity.CENTER;
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.CENTER;
+            params.width = goal.calculateRadius()*2;
+            params.height = goal.calculateRadius()*2;
+            bubble.setLayoutParams(params);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) bubble
                     .setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
             bubble.setId((int) goal.getGoalID());
-            bubble.setX(new Random().nextInt(300));   //randomize location of bubble
-            bubble.setY(new Random().nextInt(300));
+            bubble.setX(new Random().nextInt(1000)-500);   //randomize location of bubble
+            bubble.setY(new Random().nextInt(1000)-500);
             bubble.setOnLongClickListener(listener);
             main.bubbleLayout.addView(bubble);
         }
