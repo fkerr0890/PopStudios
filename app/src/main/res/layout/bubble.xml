@@ -3,4 +3,6 @@
     android:layout_width="@android:dimen/notification_large_icon_width"
     android:layout_height="@android:dimen/notification_large_icon_height"
     android:longClickable="true"
-    />
+    android:clickable="true"
+    android:focusable="true"
+    android:onClick="animateBubble" />
