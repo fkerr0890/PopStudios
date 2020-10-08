@@ -35,7 +35,7 @@ public class Goal {
     }
 
     public int calculateRadius(){
-        return (this.goalImportance + this.goalDifficulty) * 20;
+        return (this.goalImportance + this.goalDifficulty + 5) * 20;
     }
 
     public int calculateColor(){

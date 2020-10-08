@@ -7,18 +7,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -27,25 +21,25 @@ import com.example.popstudios.databinding.ActivityMainBinding;
 import com.example.popstudios.databinding.BubbleBinding;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener {
     private static final String TAG = "MyActivity";
     ActivityMainBinding main;
-    private int numBubbles;
     FeedReaderDbHelper dbHelper;
     private Animator currentAnimator;
     private int shortAnimationDuration;
     private List<Integer> listOfExpandedBubbles;
-
     View.OnLongClickListener listener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             int buttonId = v.getId();
             System.out.println(buttonId);
             this.deleteGoal(buttonId);
+
+            // this makes it disappear but doesn't delete it
+            // v.setVisibility(View.GONE);
 
             // gets the ViewGroup (essentially the layout that the button is from) by ca
             ViewGroup parentView = (ViewGroup) v.getParent();
@@ -65,39 +59,33 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         main = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(R.layout.activity_main);
-        numBubbles = 0;
+        setContentView(main.getRoot());
         listOfExpandedBubbles = new ArrayList<>();
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
         dbHelper = new FeedReaderDbHelper(this);
         List<Goal> goals = dbHelper.getGoalsFromDb();
-        addBubbles(goals);
-        //addSingleBubble();
+        layoutBubbles(goals);
     }
 
-    @SuppressLint("InflateParams")
-    private void addBubbles(List<Goal> goalList) {
+    private void layoutBubbles(List<Goal> goalList) {
         for (Goal goal : goalList) {
-            CoordinatorLayout coordinatorLayout = findViewById(R.id.bubble_layout);
-            View bubble = LayoutInflater.from(this).inflate(R.layout.bubble, null);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                bubble.setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
+            View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
+            CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.CENTER;
+            params.width = goal.calculateRadius()*2;
+            params.height = goal.calculateRadius()*2;
+            bubble.setLayoutParams(params);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) bubble
+                    .setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
             bubble.setId((int) goal.getGoalID());
-            bubble.setX(new Random().nextInt(1000));   //randomize location of bubble
-            bubble.setY(new Random().nextInt(1000));
+            bubble.setX(new Random().nextInt(1000)-500);   //randomize location of bubble
+            bubble.setY(new Random().nextInt(1000)-500);
             bubble.setOnLongClickListener(listener);
-            coordinatorLayout.addView(bubble);
+            main.bubbleLayout.addView(bubble);
         }
-    }
-
-    private void addSingleBubble() {
-        View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
-        bubble.setLayoutParams(new CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.WRAP_CONTENT,
-                CoordinatorLayout.LayoutParams.WRAP_CONTENT));
-        ((CoordinatorLayout.LayoutParams) bubble.getLayoutParams()).gravity = Gravity.CENTER;
-        main.bubbleLayout.addView(bubble);
     }
 
     public void startInputActivity(View view) {
@@ -113,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     public void animateBubble(View view) {
         if (currentAnimator != null)
             currentAnimator.cancel();
+
+
 
         // Set the pivot point for SCALE_X and SCALE_Y transformations
         // to the top-left corner of the zoomed-in view (the default
@@ -130,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         }
         animate(view,scale);
     }
+
 
     private void animate(View bubble, float finalScale) {
         // Construct and run the parallel animation of the four translation and
