@@ -47,9 +47,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             System.out.println(buttonId);
             this.deleteGoal(buttonId);
 
-            // this makes it disappear but doesn't delete it
-            // v.setVisibility(View.GONE);
-
             // gets the ViewGroup (essentially the layout that the button is from) by ca
             ViewGroup parentView = (ViewGroup) v.getParent();
             parentView.removeView(v);
@@ -63,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, null);
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             coordinatorLayout.addView(bubble);
         }
     }
-
 
     private void addSingleBubble() {
         View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
@@ -135,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         }
         animate(view,scale);
     }
-
 
     private void animate(View bubble, float finalScale) {
         // Construct and run the parallel animation of the four translation and
