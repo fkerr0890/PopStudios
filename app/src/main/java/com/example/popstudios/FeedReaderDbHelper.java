@@ -16,7 +16,8 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                     FeedReaderContract.FeedEntry._ID + " INTEGER PRIMARY KEY," +
                     FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME + " TEXT," +
                     FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE + " SMALLINT," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY + " SMALLINT)";
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY + " SMALLINT," +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION + "TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + FeedReaderContract.FeedEntry.TABLE_NAME;
@@ -49,7 +50,8 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                 BaseColumns._ID,
                 FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME,
                 FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE,
-                FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY
+                FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY,
+                FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION
         };
 
 
@@ -73,7 +75,9 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE));
             int goalDifficulty = cursor.getInt(
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY));
-            Goal newGoal = new Goal(itemId, goalName, goalImportance, goalDifficulty);
+            String goalDescription = cursor.getString(
+                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION));
+            Goal newGoal = new Goal(itemId, goalName, goalImportance, goalDifficulty, goalDescription);
             goals.add(newGoal);
         }
         cursor.close();

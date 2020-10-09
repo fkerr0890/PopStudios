@@ -10,14 +10,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class InputActivity extends AppCompatActivity {
     SeekBar importanceBar, difficultyBar;
-    EditText editGoal;
+    EditText editGoal, editDescription;
     Button inputAddBttn;
 
-    String goalName;
+    String goalName, goalDescriptionStr;
     int goalImportanceNum,goalDifficultyNum;
 
     FeedReaderDbHelper dbHelper;
@@ -31,6 +32,7 @@ public class InputActivity extends AppCompatActivity {
         inputAddBttn = findViewById(R.id.inputAddBtn);
         importanceBar = findViewById(R.id.importanceBar);
         difficultyBar = findViewById(R.id.difficultyBar);
+        editDescription = findViewById(R.id.editDescription);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && bundle.get("Goal")!= null){
@@ -89,6 +91,7 @@ public class InputActivity extends AppCompatActivity {
         goalName = editGoal.getText().toString();
         goalImportanceNum = importanceBar.getProgress();
         goalDifficultyNum = difficultyBar.getProgress();
+        goalDescriptionStr = editDescription.getText().toString();
 
         if (goalName.isEmpty()){
             Toast.makeText(InputActivity.this, "Please name your goal",Toast.LENGTH_SHORT).show();
@@ -102,6 +105,8 @@ public class InputActivity extends AppCompatActivity {
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME, goalName);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
+        //values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, "idk");
 
 
 // Insert the new row, returning the primary key value of the new row

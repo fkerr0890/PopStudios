@@ -12,12 +12,14 @@ public class Goal {
     public int goalDifficulty;
     public long id;
     public List<Integer> colorList;
+    public String description;
 
-    Goal(long id, String name, int goalImportance, int goalDifficulty){
+    Goal(long id, String name, int goalImportance, int goalDifficulty, String description){
         this.id = id;
         this.name = name;
         this.goalImportance = goalImportance;
         this.goalDifficulty = goalDifficulty;
+        this.description = description;
     }
 
     public long getGoalID(){return id;}
@@ -32,6 +34,10 @@ public class Goal {
 
     public int getGoalDifficulty(){
         return goalDifficulty;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public int calculateRadius(){
