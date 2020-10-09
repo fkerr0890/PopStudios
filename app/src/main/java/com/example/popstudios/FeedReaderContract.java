@@ -14,6 +14,6 @@ public final class FeedReaderContract {
         public static final String COLUMN_NAME_GOAL_NAME = "goal_name";
         public static final String COLUMN_NAME_IMPORTANCE = "goal_importance";
         public static final String COLUMN_NAME_DIFFICULTY = "goal_difficulty";
-
+        public static final String COLUMN_NAME_DESCRIPTION = "goal_description";
     }
 }
