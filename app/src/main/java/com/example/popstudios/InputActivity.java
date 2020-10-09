@@ -20,6 +20,8 @@ public class InputActivity extends AppCompatActivity {
     String goalName;
     int goalImportanceNum,goalDifficultyNum;
 
+    FeedReaderDbHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +81,7 @@ public class InputActivity extends AppCompatActivity {
         if (goalName.isEmpty()){
             Toast.makeText(InputActivity.this, "Please name your goal",Toast.LENGTH_SHORT).show();
         }
-        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(view.getContext());
+        dbHelper = new FeedReaderDbHelper(view.getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 // Create a new map of values, where column names are the keys
@@ -91,6 +93,21 @@ public class InputActivity extends AppCompatActivity {
 
 // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
+    }
+
+    public void updateGoal(Goal goal){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        goalName = editGoal.getText().toString();
+        goalImportanceNum = importanceBar.getProgress();
+        goalDifficultyNum = difficultyBar.getProgress();
+
+        ContentValues newValues = new ContentValues();
+        newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME, goalName);
+        newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
+        newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
+        db.update(FeedReaderContract.FeedEntry.TABLE_NAME, newValues,
+                FeedReaderContract.FeedEntry._ID + " = " + goal.getGoalID(),null);
     }
 
 }
