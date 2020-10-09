@@ -32,6 +32,17 @@ public class InputActivity extends AppCompatActivity {
         importanceBar = findViewById(R.id.importanceBar);
         difficultyBar = findViewById(R.id.difficultyBar);
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.get("Goal")!= null){
+            goalName = editGoal.getText().toString();
+            goalImportanceNum = importanceBar.getProgress();
+            goalDifficultyNum = difficultyBar.getProgress();
+            bundle.putString("GOAL_NAME", goalName);
+            bundle.putInt("GOAL_IMPORTANCE", goalImportanceNum);
+            bundle.putInt("GOAL_DIFFICULTY", goalDifficultyNum);
+            Goal goal = (Goal)getIntent().getExtras().get("Goal");
+        }
+
         if (importanceBar != null) {
             importanceBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override

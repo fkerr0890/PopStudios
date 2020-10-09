@@ -122,6 +122,9 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
     public void startInputActivity(View view) {
         Intent inputActivityIntent = new Intent(this,InputActivity.class);
+        inputActivityIntent.putExtra("Goal", new Goal());
+        inputActivityIntent.putExtras(bundle);
+
         startActivity(inputActivityIntent);
     }
 
