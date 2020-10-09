@@ -68,18 +68,20 @@ public class InputActivity extends AppCompatActivity {
     }
 
     public void startMainActivity(View view) {
-        writeSql(view);
-        Intent mainActivityIntent = new Intent(this,MainActivity.class);
-        startActivity(mainActivityIntent);
+        if (writeSql(view)) {
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            startActivity(mainActivityIntent);
+        }
     }
 
-    private void writeSql(View view) {
+    private boolean writeSql(View view) {
         goalName = editGoal.getText().toString();
         goalImportanceNum = importanceBar.getProgress();
         goalDifficultyNum = difficultyBar.getProgress();
 
         if (goalName.isEmpty()){
             Toast.makeText(InputActivity.this, "Please name your goal",Toast.LENGTH_SHORT).show();
+            return false;
         }
         dbHelper = new FeedReaderDbHelper(view.getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -93,6 +95,7 @@ public class InputActivity extends AppCompatActivity {
 
 // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
+        return true;
     }
 
     public void updateGoal(Goal goal){
