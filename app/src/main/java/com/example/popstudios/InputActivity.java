@@ -1,7 +1,5 @@
 package com.example.popstudios;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,8 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class InputActivity extends AppCompatActivity {
     SeekBar importanceBar, difficultyBar;
@@ -34,15 +33,27 @@ public class InputActivity extends AppCompatActivity {
         difficultyBar = findViewById(R.id.difficultyBar);
         editDescription = findViewById(R.id.editDescription);
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null && bundle.get("Goal")!= null){
-            goalName = editGoal.getText().toString();
-            goalImportanceNum = importanceBar.getProgress();
-            goalDifficultyNum = difficultyBar.getProgress();
-            bundle.putString("GOAL_NAME", goalName);
-            bundle.putInt("GOAL_IMPORTANCE", goalImportanceNum);
-            bundle.putInt("GOAL_DIFFICULTY", goalDifficultyNum);
-            Goal goal = (Goal)getIntent().getExtras().get("Goal");
+        dbHelper = new FeedReaderDbHelper(this);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("GOAL_ID")){
+            final long goalID = intent.getLongExtra("GOAL_ID",0);
+            String goalName = intent.getStringExtra("GOAL_NAME");
+            int goalImportance = intent.getIntExtra("GOAL_IMPORTANCE",0);
+            int goalDifficulty = intent.getIntExtra("GOAL_DIFFICULTY",0);
+            editGoal.setText(goalName);
+            importanceBar.setProgress(goalImportance);
+            difficultyBar.setProgress(goalDifficulty);
+            inputAddBttn.setText("Save");
+            inputAddBttn.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View v) {
+                    updateGoal(goalID);
+                    Intent mainActivityIntent = new Intent(InputActivity.this, MainActivity.class);
+                    startActivity(mainActivityIntent);
+                }
+            });
         }
 
         if (importanceBar != null) {
@@ -87,6 +98,7 @@ public class InputActivity extends AppCompatActivity {
         }
     }
 
+
     private boolean writeSql(View view) {
         goalName = editGoal.getText().toString();
         goalImportanceNum = importanceBar.getProgress();
@@ -97,7 +109,6 @@ public class InputActivity extends AppCompatActivity {
             Toast.makeText(InputActivity.this, "Please name your goal",Toast.LENGTH_SHORT).show();
             return false;
         }
-        dbHelper = new FeedReaderDbHelper(view.getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 // Create a new map of values, where column names are the keys
@@ -105,8 +116,8 @@ public class InputActivity extends AppCompatActivity {
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME, goalName);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
-        //values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
-        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, "idk");
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
+//        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, "idk");
 
 
 // Insert the new row, returning the primary key value of the new row
@@ -114,7 +125,7 @@ public class InputActivity extends AppCompatActivity {
         return true;
     }
 
-    public void updateGoal(Goal goal){
+    public void updateGoal(Long goalID){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         goalName = editGoal.getText().toString();
@@ -125,8 +136,9 @@ public class InputActivity extends AppCompatActivity {
         newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME, goalName);
         newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
         newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
+        newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
         db.update(FeedReaderContract.FeedEntry.TABLE_NAME, newValues,
-                FeedReaderContract.FeedEntry._ID + " = " + goal.getGoalID(),null);
+                FeedReaderContract.FeedEntry._ID + " = " + goalID,null);
     }
 
 }
