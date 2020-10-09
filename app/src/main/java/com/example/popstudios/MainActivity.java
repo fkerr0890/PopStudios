@@ -2,6 +2,7 @@ package com.example.popstudios;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -16,12 +17,20 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.TextView;
 
 import com.example.popstudios.databinding.ActivityMainBinding;
 import com.example.popstudios.databinding.BubbleBinding;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.skydoves.balloon.ArrowConstraints;
+import com.skydoves.balloon.ArrowOrientation;
+import com.skydoves.balloon.Balloon;
+import com.skydoves.balloon.BalloonAnimation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener {
@@ -31,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private Animator currentAnimator;
     private int shortAnimationDuration;
     private List<Integer> listOfExpandedBubbles;
+    private Balloon bubbleInfo;
+    private Map<Long,Goal> goalById;
     View.OnLongClickListener listener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
@@ -63,14 +74,35 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         listOfExpandedBubbles = new ArrayList<>();
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
+
+        bubbleInfo = new Balloon.Builder(this)
+                .setLayout(R.layout.balloon_layout)
+                .setArrowSize(10)
+                .setArrowOrientation(ArrowOrientation.BOTTOM)
+                .setArrowConstraints(ArrowConstraints.ALIGN_ANCHOR)
+                .setArrowPosition(0.5f)
+                .setArrowVisible(true)
+                .setWidthRatio(0.35f)
+                .setHeight(100)
+                .setTextSize(15f)
+                .setCornerRadius(4f)
+                .setAlpha(1f)
+                .setBackgroundColor(ContextCompat.getColor(this, R.color.balloon))
+                .setBalloonAnimation(BalloonAnimation.CIRCULAR)
+                .build();
+
         dbHelper = new FeedReaderDbHelper(this);
+        goalById = new HashMap<>();
         List<Goal> goals = dbHelper.getGoalsFromDb();
+        for (Goal goal : goals) {
+            goalById.put(goal.getGoalID(),goal);
+        }
         layoutBubbles(goals);
     }
 
     private void layoutBubbles(List<Goal> goalList) {
         for (Goal goal : goalList) {
-            View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
+            FloatingActionButton bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
             CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
                     CoordinatorLayout.LayoutParams.WRAP_CONTENT,
                     CoordinatorLayout.LayoutParams.WRAP_CONTENT);
@@ -115,8 +147,11 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             listOfExpandedBubbles.remove((Integer) view.getId());
         }
         else {
-            scale = 4f;
+            scale = (float)(2*Math.pow(30,(view.getWidth()*0.001-0.2)*-1)+1);
             listOfExpandedBubbles.add(view.getId());
+            TextView textView = bubbleInfo.getContentView().findViewById(R.id.textView);
+            textView.setText(goalById.get((long)view.getId()).getName());
+            bubbleInfo.showAlignTop(view);
         }
         animate(view,scale);
     }

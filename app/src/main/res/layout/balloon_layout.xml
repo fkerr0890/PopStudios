@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/balloon_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="2.2"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:text="@string/balloon_text"/>
+
+    <ImageButton
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="5dp"
+        android:fadingEdge="horizontal"
+        android:padding="30dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:contentDescription="@string/balloon_button_description"
+        android:focusable="true"
+        android:onClick="startInputActivity"
+        android:src="@mipmap/baseline_edit_black_24"
+        android:tint="@android:color/white"
+        android:backgroundTint="#D81B60" />
+
+
+</LinearLayout>
