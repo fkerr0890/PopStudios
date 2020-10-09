@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.popstudios.databinding.ActivityMainBinding;
@@ -122,11 +123,27 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
     public void startInputActivity(View view) {
         Intent inputActivityIntent = new Intent(this,InputActivity.class);
-        inputActivityIntent.putExtra("Goal", new Goal());
-        inputActivityIntent.putExtras(bundle);
-
         startActivity(inputActivityIntent);
     }
+
+    public void startEditInputActivity(View view){
+        Intent inputEditActivityIntent = new Intent(this,InputActivity.class);
+
+        Goal goal = goalById.get((long)view.getId());
+        inputEditActivityIntent.putExtra("GOAL_ID", goal.getGoalID());
+
+        String goalName = goal.getName();
+        inputEditActivityIntent.putExtra("GOAL_NAME", goalName);
+
+        int goalImportance = goal.goalImportance;
+        inputEditActivityIntent.putExtra("GOAL_IMPORTANCE", goalImportance);
+
+        int goalDifficulty = goal.goalDifficulty;
+        inputEditActivityIntent.putExtra("GOAL_DIFFICULTY", goalDifficulty);
+        startActivity(inputEditActivityIntent);
+    }
+
+
 
     @Override
     public boolean onLongClick(View v) {
@@ -152,6 +169,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         else {
             scale = (float)(2*Math.pow(30,(view.getWidth()*0.001-0.2)*-1)+1);
             listOfExpandedBubbles.add(view.getId());
+            ImageButton button = bubbleInfo.getContentView().findViewById(R.id.button);
+            button.setId(view.getId());
             TextView textView = bubbleInfo.getContentView().findViewById(R.id.textView);
             textView.setText(goalById.get((long)view.getId()).getName());
             bubbleInfo.showAlignTop(view);
