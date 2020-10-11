@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 public class DeleteButtonDialog extends AppCompatDialogFragment {
+    // creates listener to allow user to choose yes or cancel in dialog
     private DeleteButtonDialogListener listener;
 
     @Override
