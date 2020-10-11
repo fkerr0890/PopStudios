@@ -8,6 +8,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements View.OnLongClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnLongClickListener, DeleteButtonDialog.DeleteButtonDialogListener {
     private static final String TAG = "MyActivity";
     ActivityMainBinding main;
     FeedReaderDbHelper dbHelper;
@@ -43,29 +44,61 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private List<Integer> listOfExpandedBubbles;
     private Balloon bubbleInfo;
     private Map<Long,Goal> goalById;
+    int deleteButtonId;
+    View deleteView;
+
     View.OnLongClickListener listener = new View.OnLongClickListener() {
+        // Gets ID and View from button that user LongClicks on and opens a Dialog window allowing user to choose whether to delete or not
         @Override
         public boolean onLongClick(View v) {
             int buttonId = v.getId();
-            System.out.println(buttonId);
-            this.deleteGoal(buttonId);
 
-            // this makes it disappear but doesn't delete it
-            // v.setVisibility(View.GONE);
-
-            // gets the ViewGroup (essentially the layout that the button is from) by ca
-            ViewGroup parentView = (ViewGroup) v.getParent();
-            parentView.removeView(v);
-
+            // set info of button to be deleted (view and ID)
+            setDeleteButtonId(buttonId);
+            setDeleteView(v);
+            // System.out.println(buttonId);
+            openDialog();
             return true;
         }
 
-        private void deleteGoal(int buttonID) {
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            String selection = FeedReaderContract.FeedEntry._ID + " = " + (long)buttonID;
-            db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, null);
+        // creates a new instance of the dialog class??
+        public void openDialog() {
+            DeleteButtonDialog dialog = new DeleteButtonDialog();
+            dialog.show(getSupportFragmentManager(), "example dialog");
         }
     };
+
+    // setters and getters for deleting button View and ID
+    public void setDeleteButtonId(int newDeleteButtonId) {
+        this.deleteButtonId = newDeleteButtonId;
+    }
+    public int getDeleteButtonId() {
+        return deleteButtonId;
+    }
+
+    public void setDeleteView(View view) {
+        this.deleteView = view;
+    }
+    public View getDeleteView() {
+        return deleteView;
+    }
+
+    // Called when the user clicks "yes" to delete in Dialog
+    @Override
+    public void onYesClicked() {
+        // get info from longClick
+        int deleteButtonId = getDeleteButtonId();
+        View deleteButtonView = getDeleteView();
+
+        // us ID to delete from Database
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String selection = FeedReaderContract.FeedEntry._ID + " = " + (long)deleteButtonId;
+        db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, null);
+
+        // visually delete button by removing it from ViewGroup
+        ViewGroup parentView = (ViewGroup) deleteButtonView.getParent();
+        parentView.removeView(deleteButtonView);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,8 +178,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         startActivity(inputEditActivityIntent);
     }
 
-
-
     @Override
     public boolean onLongClick(View v) {
         return false;
@@ -155,8 +186,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     public void animateBubble(View view) {
         if (currentAnimator != null)
             currentAnimator.cancel();
-
-
 
         // Set the pivot point for SCALE_X and SCALE_Y transformations
         // to the top-left corner of the zoomed-in view (the default
@@ -179,7 +208,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         }
         animate(view,scale);
     }
-
 
     private void animate(View bubble, float finalScale) {
         // Construct and run the parallel animation of the four translation and
