@@ -17,7 +17,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                     FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME + " TEXT," +
                     FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE + " SMALLINT," +
                     FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY + " SMALLINT," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION + "TEXT)";
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + FeedReaderContract.FeedEntry.TABLE_NAME;
