@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 .setBalloonAnimation(BalloonAnimation.CIRCULAR)
                 .build();
 
+//        this.deleteDatabase("FeedReader");
+//        SQLiteDatabase.deleteDatabase(new File("FeedReader.db"));
         dbHelper = new FeedReaderDbHelper(this);
         goalById = new HashMap<>();
         List<Goal> goals = dbHelper.getGoalsFromDb();
