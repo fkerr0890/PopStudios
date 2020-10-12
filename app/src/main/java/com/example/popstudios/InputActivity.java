@@ -41,9 +41,11 @@ public class InputActivity extends AppCompatActivity {
             String goalName = intent.getStringExtra("GOAL_NAME");
             int goalImportance = intent.getIntExtra("GOAL_IMPORTANCE",0);
             int goalDifficulty = intent.getIntExtra("GOAL_DIFFICULTY",0);
+            String description = intent.getStringExtra("GOAL_DESCRIPTION");
             editGoal.setText(goalName);
             importanceBar.setProgress(goalImportance);
             difficultyBar.setProgress(goalDifficulty);
+            editDescription.setText(description);
             inputAddBttn.setText("Save");
             inputAddBttn.setOnClickListener(new View.OnClickListener(){
 
@@ -117,7 +119,6 @@ public class InputActivity extends AppCompatActivity {
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
-//        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, "idk");
 
 
 // Insert the new row, returning the primary key value of the new row
@@ -131,6 +132,7 @@ public class InputActivity extends AppCompatActivity {
         goalName = editGoal.getText().toString();
         goalImportanceNum = importanceBar.getProgress();
         goalDifficultyNum = difficultyBar.getProgress();
+        goalDescriptionStr = editDescription.getText().toString();
 
         ContentValues newValues = new ContentValues();
         newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME, goalName);

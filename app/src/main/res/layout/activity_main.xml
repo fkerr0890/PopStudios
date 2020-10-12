@@ -32,7 +32,7 @@
         android:layout_marginBottom="660dp"
         android:fontFamily="sans-serif-condensed-medium"
         android:text="@string/main_activity_title"
-        android:textColor="#FF1D6F"
+        android:textColor="@color/mainColor"
         android:textColorLink="#28E1CB"
         android:textSize="38sp"
         app:layout_constraintBottom_toTopOf="@+id/divider3"

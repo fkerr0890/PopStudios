@@ -174,6 +174,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
         int goalDifficulty = goal.goalDifficulty;
         inputEditActivityIntent.putExtra("GOAL_DIFFICULTY", goalDifficulty);
+
+        String goalDescription = goal.getDescription();
+        inputEditActivityIntent.putExtra("GOAL_DESCRIPTION", goalDescription);
+
         startActivity(inputEditActivityIntent);
     }
 
