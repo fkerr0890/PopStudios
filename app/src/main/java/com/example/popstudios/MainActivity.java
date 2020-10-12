@@ -29,6 +29,7 @@ import com.skydoves.balloon.ArrowOrientation;
 import com.skydoves.balloon.Balloon;
 import com.skydoves.balloon.BalloonAnimation;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private Animator currentAnimator;
     private int shortAnimationDuration;
     private List<Integer> listOfExpandedBubbles;
-    private Balloon bubbleInfo;
     private Map<Long,Goal> goalById;
     int deleteButtonId;
     View deleteView;
@@ -106,10 +106,20 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         main = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(main.getRoot());
         listOfExpandedBubbles = new ArrayList<>();
-        shortAnimationDuration = getResources().getInteger(
-                android.R.integer.config_shortAnimTime);
+        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        this.deleteDatabase("FeedReader");
+        SQLiteDatabase.deleteDatabase(new File("FeedReader.db"));
+        dbHelper = new FeedReaderDbHelper(this);
+        goalById = new HashMap<>();
+        List<Goal> goals = dbHelper.getGoalsFromDb();
+        for (Goal goal : goals) {
+            goalById.put(goal.getGoalID(),goal);
+        }
+        layoutBubbles(goals);
+    }
 
-        bubbleInfo = new Balloon.Builder(this)
+    private Balloon createBalloon() {
+        return new Balloon.Builder(this)
                 .setLayout(R.layout.balloon_layout)
                 .setArrowSize(10)
                 .setArrowOrientation(ArrowOrientation.BOTTOM)
@@ -124,18 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 .setBackgroundColor(ContextCompat.getColor(this, R.color.balloon))
                 .setBalloonAnimation(BalloonAnimation.CIRCULAR)
                 .build();
-
-//        this.deleteDatabase("FeedReader");
-//        SQLiteDatabase.deleteDatabase(new File("FeedReader.db"));
-        dbHelper = new FeedReaderDbHelper(this);
-        goalById = new HashMap<>();
-        List<Goal> goals = dbHelper.getGoalsFromDb();
-        for (Goal goal : goals) {
-            goalById.put(goal.getGoalID(),goal);
-        }
-        layoutBubbles(goals);
     }
-
     private void layoutBubbles(List<Goal> goalList) {
         for (Goal goal : goalList) {
             FloatingActionButton bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
@@ -200,8 +199,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         else {
             scale = (float)(2*Math.pow(30,(view.getWidth()*0.001-0.2)*-1)+1);
             listOfExpandedBubbles.add(view.getId());
-            ImageButton button = bubbleInfo.getContentView().findViewById(R.id.button);
-            button.setId(view.getId());
+            Balloon bubbleInfo = createBalloon();
+            ImageButton button = bubbleInfo.getContentView().findViewById(R.id.editButton);
+            if (button != null)
+                button.setId(view.getId());
             TextView textView = bubbleInfo.getContentView().findViewById(R.id.textView);
             textView.setText(goalById.get((long)view.getId()).getName());
             bubbleInfo.showAlignTop(view);
