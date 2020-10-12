@@ -14,7 +14,7 @@
         android:textSize="20sp"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:text="@string/balloon_text"/>
+       />
 
     <ImageButton
         android:id="@+id/button"
