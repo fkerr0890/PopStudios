@@ -32,7 +32,6 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:fontFamily="sans-serif-condensed"
-        android:text="@string/input_goal"
         android:textSize="46sp" />
 
     <EditText

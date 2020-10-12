@@ -1,5 +1,6 @@
 package com.example.popstudios;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,7 @@ public class InputActivity extends AppCompatActivity {
     SeekBar importanceBar, difficultyBar;
     EditText editGoal, editDescription;
     Button inputAddBttn;
+    TextView inputName;
 
     String goalName, goalDescriptionStr;
     int goalImportanceNum,goalDifficultyNum;
@@ -27,6 +30,9 @@ public class InputActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input);
 
+        inputName = findViewById(R.id.inputActivityTitle);
+        inputName.setText(R.string.create_goal);
+        inputName = findViewById(R.id.inputActivityTitle);
         editGoal = findViewById(R.id.editGoal);
         inputAddBttn = findViewById(R.id.inputAddBtn);
         importanceBar = findViewById(R.id.importanceBar);
@@ -42,11 +48,13 @@ public class InputActivity extends AppCompatActivity {
             int goalImportance = intent.getIntExtra("GOAL_IMPORTANCE",0);
             int goalDifficulty = intent.getIntExtra("GOAL_DIFFICULTY",0);
             String description = intent.getStringExtra("GOAL_DESCRIPTION");
+            inputName.setText(R.string.edit_goal);
             editGoal.setText(goalName);
             importanceBar.setProgress(goalImportance);
             difficultyBar.setProgress(goalDifficulty);
             editDescription.setText(description);
             inputAddBttn.setText("Save");
+
             inputAddBttn.setOnClickListener(new View.OnClickListener(){
 
                 @Override
