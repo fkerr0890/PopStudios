@@ -8,7 +8,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,10 +33,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener, DeleteButtonDialog.DeleteButtonDialogListener {
-    private static final String TAG = "MyActivity";
+//    private static final String TAG = "MyActivity";
     ActivityMainBinding main;
     FeedReaderDbHelper dbHelper;
     private Animator currentAnimator;
@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     int deleteButtonId;
     View deleteView;
 
+    FloatingActionButton firstBubble;
+    Random random;
     View.OnLongClickListener listener = new View.OnLongClickListener() {
         // Gets ID and View from button that user LongClicks on and opens a Dialog window allowing user to choose whether to delete or not
         @Override
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     public void setDeleteButtonId(int newDeleteButtonId) {
         this.deleteButtonId = newDeleteButtonId;
     }
+
     public int getDeleteButtonId() {
         return deleteButtonId;
     }
@@ -111,11 +114,13 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         SQLiteDatabase.deleteDatabase(new File("FeedReader.db"));
         dbHelper = new FeedReaderDbHelper(this);
         goalById = new HashMap<>();
+        firstBubble = null;
+        random = new Random();
         List<Goal> goals = dbHelper.getGoalsFromDb();
         for (Goal goal : goals) {
             goalById.put(goal.getGoalID(),goal);
+            addBubble(goal);
         }
-        layoutBubbles(goals);
     }
 
     private Balloon createBalloon() {
@@ -135,24 +140,30 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 .setBalloonAnimation(BalloonAnimation.CIRCULAR)
                 .build();
     }
-    private void layoutBubbles(List<Goal> goalList) {
-        for (Goal goal : goalList) {
-            FloatingActionButton bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
-            CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
-                    CoordinatorLayout.LayoutParams.WRAP_CONTENT,
-                    CoordinatorLayout.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.CENTER;
-            params.width = goal.calculateRadius()*2;
-            params.height = goal.calculateRadius()*2;
-            bubble.setLayoutParams(params);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) bubble
-                    .setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
-            bubble.setId((int) goal.getGoalID());
-            bubble.setX(new Random().nextInt(1000)-500);   //randomize location of bubble
-            bubble.setY(new Random().nextInt(1000)-500);
-            bubble.setOnLongClickListener(listener);
-            main.bubbleLayout.addView(bubble);
+
+    private void addBubble(Goal goal) {
+        FloatingActionButton bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
+        CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+                CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER;
+        params.width = goal.calculateRadius() * 2;
+        params.height = goal.calculateRadius() * 2;
+        bubble.setLayoutParams(params);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) bubble
+                .setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
+        bubble.setId((int) goal.getGoalID());
+        bubble.setOnLongClickListener(listener);
+        if (firstBubble == null) firstBubble = bubble;
+        else {
+            double angle = random.nextDouble() * 2 * Math.PI;
+            bubble.setTranslationX(((float) bubble.getLayoutParams().width/2 +
+                    (float) firstBubble.getLayoutParams().width/2) * (float) Math.cos(angle));
+            bubble.setTranslationY(((float) bubble.getLayoutParams().width/2 +
+                    (float) firstBubble.getLayoutParams().width/2) * (float) Math.sin(angle));
+            System.out.println(firstBubble.getLayoutParams().width);
         }
+        main.bubbleLayout.addView(bubble);
     }
 
     public void startInputActivity(View view) {
@@ -164,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         Intent inputEditActivityIntent = new Intent(this,InputActivity.class);
 
         Goal goal = goalById.get((long)view.getId());
+        assert goal != null;
         inputEditActivityIntent.putExtra("GOAL_ID", goal.getGoalID());
 
         String goalName = goal.getName();
@@ -208,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             if (button != null)
                 button.setId(view.getId());
             TextView textView = bubbleInfo.getContentView().findViewById(R.id.textView);
-            textView.setText(goalById.get((long)view.getId()).getName());
+            textView.setText(Objects.requireNonNull(goalById.get((long) view.getId())).getName());
             bubbleInfo.showAlignTop(view);
         }
         animate(view,scale);
