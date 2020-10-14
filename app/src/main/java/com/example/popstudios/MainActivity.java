@@ -8,11 +8,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +30,6 @@ import com.skydoves.balloon.ArrowOrientation;
 import com.skydoves.balloon.Balloon;
 import com.skydoves.balloon.BalloonAnimation;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private Animator currentAnimator;
     private int shortAnimationDuration;
     private List<Integer> listOfExpandedBubbles;
+    public static float screenWidth;
     private Map<Long,Goal> goalById;
     int deleteButtonId;
     View deleteView;
@@ -74,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     public void setDeleteButtonId(int newDeleteButtonId) {
         this.deleteButtonId = newDeleteButtonId;
     }
-
     public int getDeleteButtonId() {
         return deleteButtonId;
     }
@@ -109,9 +110,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         main = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(main.getRoot());
         listOfExpandedBubbles = new ArrayList<>();
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        screenWidth = metrics.widthPixels;
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
-        this.deleteDatabase("FeedReader");
-        SQLiteDatabase.deleteDatabase(new File("FeedReader.db"));
         dbHelper = new FeedReaderDbHelper(this);
         goalById = new HashMap<>();
         firstBubble = null;
@@ -153,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) bubble
                 .setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
         bubble.setId((int) goal.getGoalID());
+        bubble.setContentDescription("This is a goal. Name: " + goal.getName());
         bubble.setOnLongClickListener(listener);
         if (firstBubble == null) firstBubble = bubble;
         else {
@@ -181,16 +184,25 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         String goalName = goal.getName();
         inputEditActivityIntent.putExtra("GOAL_NAME", goalName);
 
-        int goalImportance = goal.goalImportance;
+        int goalImportance = goal.getGoalImportance();
         inputEditActivityIntent.putExtra("GOAL_IMPORTANCE", goalImportance);
 
-        int goalDifficulty = goal.goalDifficulty;
+        int goalDifficulty = goal.getGoalDifficulty();
         inputEditActivityIntent.putExtra("GOAL_DIFFICULTY", goalDifficulty);
 
         String goalDescription = goal.getDescription();
         inputEditActivityIntent.putExtra("GOAL_DESCRIPTION", goalDescription);
 
         startActivity(inputEditActivityIntent);
+
+    }
+
+    public void showInfo(View view) {
+        Goal goal = goalById.get((long)view.getId());
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(goal.getDescription()).setTitle("Goal Info");
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
@@ -216,9 +228,12 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             scale = (float)(2*Math.pow(30,(view.getWidth()*0.001-0.2)*-1)+1);
             listOfExpandedBubbles.add(view.getId());
             Balloon bubbleInfo = createBalloon();
-            ImageButton button = bubbleInfo.getContentView().findViewById(R.id.editButton);
-            if (button != null)
-                button.setId(view.getId());
+            ImageButton editButton = bubbleInfo.getContentView().findViewById(R.id.editButton);
+            if (editButton != null)
+                editButton.setId(view.getId());
+            ImageButton infoButton = bubbleInfo.getContentView().findViewById(R.id.infoButton);
+            if (infoButton != null)
+                infoButton.setId(view.getId());
             TextView textView = bubbleInfo.getContentView().findViewById(R.id.textView);
             textView.setText(Objects.requireNonNull(goalById.get((long) view.getId())).getName());
             bubbleInfo.showAlignTop(view);
