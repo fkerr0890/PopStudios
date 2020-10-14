@@ -8,11 +8,10 @@ import java.util.List;
 public class Goal {
 
     public String name;
-    public int goalImportance;
-    public int goalDifficulty;
-    public long id;
-    public List<Integer> colorList;
-    public String description;
+    private final int goalImportance;
+    private final int goalDifficulty;
+    private final long id;
+    private final String description;
 
     Goal(long id, String name, int goalImportance, int goalDifficulty, String description){
         this.id = id;
@@ -41,7 +40,8 @@ public class Goal {
     }
 
     public int calculateRadius(){
-        return (this.goalImportance + this.goalDifficulty + 5) * 20;
+        float radius = (Math.round(MainActivity.screenWidth)/(1f/((this.goalImportance + this.goalDifficulty + 3f) * 0.02f)));
+        return Math.round(radius);
     }
 
     public int calculateColor(){
@@ -57,7 +57,7 @@ public class Goal {
         int color2 = Color.argb(255, 114, 239, 221);
         int color1 = Color.argb(255, 128, 255, 219);
 
-        colorList = new ArrayList<>();
+        List<Integer> colorList = new ArrayList<>();
         colorList.add(color1);
         colorList.add(color2);
         colorList.add(color3);
