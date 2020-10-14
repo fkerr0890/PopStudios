@@ -90,14 +90,16 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         int deleteButtonId = getDeleteButtonId();
         View deleteButtonView = getDeleteView();
 
+        // shrink the button
+        animateDelete(deleteButtonView,0f);
+
         // us ID to delete from Database
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String selection = FeedReaderContract.FeedEntry._ID + " = " + (long)deleteButtonId;
         db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, null);
-
         // visually delete button by removing it from ViewGroup
-        ViewGroup parentView = (ViewGroup) deleteButtonView.getParent();
-        parentView.removeView(deleteButtonView);
+        // ViewGroup parentView = (ViewGroup) deleteButtonView.getParent();
+        // parentView.removeView(deleteButtonView);
     }
 
     @Override
@@ -240,4 +242,34 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         set.start();
         currentAnimator = set;
     }
+
+    private void animateDelete(final View bubble, float finalScale) {
+        // Construct and run the parallel animation of the four translation and
+        // scale properties (SCALE_X and SCALE_Y).
+        AnimatorSet set = new AnimatorSet();
+
+        set
+                .play(ObjectAnimator.ofFloat(bubble, View.SCALE_X,finalScale))
+                .with(ObjectAnimator.ofFloat(bubble,
+                        View.SCALE_Y, finalScale));
+
+        set.setDuration(shortAnimationDuration);
+        set.setInterpolator(new DecelerateInterpolator());
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                currentAnimator = null;
+                ViewGroup parentView = (ViewGroup) bubble.getParent();
+                parentView.removeView(bubble);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                currentAnimator = null;
+            }
+        });
+        set.start();
+        currentAnimator = set;
+    }
+
 }
