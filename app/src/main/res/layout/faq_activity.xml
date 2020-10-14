@@ -21,7 +21,7 @@
         android:layout_weight="1"
         android:layout_gravity="center"
         android:fontFamily="sans-serif-condensed-medium"
-        android:text="@string/main_activity_title"
+        android:text="@string/app_name"
         android:textColor="@color/mainColor"
         android:textSize="38sp"/>
 
