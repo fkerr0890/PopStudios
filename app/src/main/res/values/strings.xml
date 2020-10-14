@@ -2,6 +2,7 @@
     <string name="app_name">"GoalPop"</string>
     <string name="goal_input_label">Goal Name</string>
     <string name="fab_addGoal_content_desc">Add a new goal</string>
+    <string name="helpBttn_content_desc">Get Help</string>
     <string name="goal_importance">Goal Importance:</string>
     <string name="goal_difficulty">Goal Difficulty:</string>
     <string name="goal_description">Goal Description:</string>
@@ -9,5 +10,22 @@
     <string name="create_goal">Create Goal</string>
     <string name="edit_goal">Edit Goal</string>
     <string name="balloon_button_description">Edit</string>
-    <string name="balloon_text">text</string>
+    <string name="faq">FAQ</string>
+    <string name="question1">How do I create a goal?</string>
+    <string name="question2">How do I edit a goal?</string>
+    <string name="question3">How do I remove a goal?</string>
+    <string name="question4">How do the bubbles signify goals?</string>
+    <string name="answer1">Click the ‘+’ button on the bottom right corner
+        of the main screen to create a new goal. Users can then input the
+        name of their goal and rate the goal’s importance and difficulty on
+        a scale of 0-5, with 5 being the most important or difficult.
+        Users can include a description of the goal as well. Once the page
+        is filled out, click the ‘Add Goal’ button and the goal will be added
+        as a bubble on the main screen.</string>
+    <string name="answer2">Users can click on a bubble to see its name, and click
+        the edit button to update the goal.</string>
+    <string name="answer3">Users can long click on a bubble to delete it.</string>
+    <string name="answer4">The color and size of the bubble will illustrate the goal’s
+        importance and difficulty rating. The larger and darker the bubble equates with
+        a higher the importance and difficulty rating.</string>
 </resources>

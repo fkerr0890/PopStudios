@@ -176,6 +176,12 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         startActivity(inputActivityIntent);
     }
 
+    public void startHelp(View view){
+        Intent helpActivityIntent = new Intent(this,FAQActivity.class);
+        startActivity(helpActivityIntent);
+    }
+
+
     public void startEditInputActivity(View view){
         Intent inputEditActivityIntent = new Intent(this,InputActivity.class);
 
