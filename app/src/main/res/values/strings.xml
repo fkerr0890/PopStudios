@@ -8,7 +8,6 @@
     <string name="add_goal">Add Goal</string>
     <string name="create_goal">Create Goal</string>
     <string name="edit_goal">Edit Goal</string>
-    <string name="main_activity_title">GoalPop</string>
     <string name="balloon_button_description">Edit</string>
     <string name="balloon_text">text</string>
 </resources>
