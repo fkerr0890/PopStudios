@@ -1,5 +1,5 @@
-// This is a class for Goal objects. Goal objects are created when the user makes a new goal. They are
-// built using the information from input page and their information is added to a database
+// This is a class for Goal objects. Goal objects are created when the user makes a new goal.
+// They are built using the information from input page and their information is added to a database
 
 package com.example.popstudios;
 

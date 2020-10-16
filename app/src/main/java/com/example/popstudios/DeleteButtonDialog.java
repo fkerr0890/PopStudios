@@ -1,3 +1,6 @@
+// Class called when user long clicks on a bubble. Generates a Dialog that allows users to either
+// complete, delete, or cancel
+
 package com.example.popstudios;
 
 import android.app.AlertDialog;
@@ -41,11 +44,13 @@ public class DeleteButtonDialog extends AppCompatDialogFragment {
         return builder.create();
     }
 
+    // adds methods that require extra action to the listener
     public interface DeleteButtonDialogListener {
         void onYesClicked();
         void onNeutralClicked();
     }
 
+    // watches for exceptions and
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

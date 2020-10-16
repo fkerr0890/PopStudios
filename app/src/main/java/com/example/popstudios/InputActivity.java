@@ -1,3 +1,8 @@
+// InputActivity is used when the user clicks on the FAB in the bottom right corner of the MainActivity
+// or when a user edits their goal. It takes information from user input to create a new goal/edit an
+// already existing goal. That goal will be shown on the main screen (and list screen) and InputActivity
+// adds data from goal to a database
+
 package com.example.popstudios;
 
 import android.annotation.SuppressLint;
@@ -15,14 +20,17 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class InputActivity extends AppCompatActivity {
+    // Variables that appear on the user screen
     SeekBar importanceBar, difficultyBar;
     EditText editGoal, editDescription;
     Button inputAddBttn;
     TextView inputName;
 
+    // Variables for information taken from user input
     String goalName, goalDescriptionStr;
     int goalImportanceNum,goalDifficultyNum;
 
+    // Names class that interacts with database
     FeedReaderDbHelper dbHelper;
 
     @Override
@@ -121,7 +129,7 @@ public class InputActivity extends AppCompatActivity {
         }
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-// Create a new map of values, where column names are the keys
+        // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME, goalName);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
@@ -129,7 +137,7 @@ public class InputActivity extends AppCompatActivity {
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
 
 
-// Insert the new row, returning the primary key value of the new row
+        // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
         return true;
     }

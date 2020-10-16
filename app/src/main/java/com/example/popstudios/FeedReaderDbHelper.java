@@ -44,7 +44,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
 
 
     public List<Goal> getGoalsFromDb() {
-//        Reads database
+        // Reads database
         SQLiteDatabase db = this.getReadableDatabase();
         String[] projection = {
                 BaseColumns._ID,

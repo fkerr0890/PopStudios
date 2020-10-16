@@ -51,8 +51,11 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
     FloatingActionButton firstBubble;
     Random random;
+
+    // Creates a new listener for when user long clicks
     View.OnLongClickListener listener = new View.OnLongClickListener() {
-        // Gets ID and View from button that user LongClicks on and opens a Dialog window allowing user to choose whether to delete or not
+        // Gets ID and View from button that user LongClicks on and opens a Dialog window allowing user
+        // to choose whether to delete or not
         @Override
         public boolean onLongClick(View v) {
             int buttonId = v.getId();
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             return true;
         }
 
-        // creates a new instance of the dialog class??
+        // creates a new instance of the dialog class
         public void openDialog() {
             DeleteButtonDialog dialog = new DeleteButtonDialog();
             dialog.show(getSupportFragmentManager(), "example dialog");
@@ -87,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         return deleteView;
     }
 
-    // Called when the user clicks "yes" to delete in Dialog
+    // Called when the user clicks "delete"
     @Override
     public void onYesClicked() {
         // get info from longClick
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, null);
     }
 
+    // Called when the user clicks "completed" in dialog
     @Override
     public void onNeutralClicked() {
         // get info from longClick
@@ -221,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         dialog.show();
     }
 
+    // Overriden method for long click
     @Override
     public boolean onLongClick(View v) {
         return false;
@@ -257,6 +262,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         animate(view,scale, false);
     }
 
+    // takes in a bubble, scale size and shrinks/expands bubble to that scale. Also takes in a boolean
+    // for deleting, if true, calls method to remove the bubble from the screen after animating
     private void animate(final View bubble, float finalScale, final boolean deleting) {
         // Construct and run the parallel animation of the four translation and
         // scale properties (SCALE_X and SCALE_Y).
@@ -269,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         set.setDuration(shortAnimationDuration);
         set.setInterpolator(new DecelerateInterpolator());
         set.addListener(new AnimatorListenerAdapter() {
-            // When the animation is done, deletes the bubble from the screen
+            // When the animation is done and if deleting is true removes the bubble entirely from screen
             @Override
             public void onAnimationEnd(Animator animation) {
                 currentAnimator = null;
