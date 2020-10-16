@@ -36,7 +36,7 @@
         android:tint="@color/colorAccent"
         android:backgroundTint="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@mipmap/round_help_outline_black_24"
+        app:srcCompat="@mipmap/round_help_outline_black_36"
         android:clickable="true"
         android:focusable="true"
         android:onClick="startHelp"/>
