@@ -257,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         animate(view,scale);
     }
 
+    // creates animation for bubble expanding and shrinking
     private void animate(View bubble, float finalScale) {
         // Construct and run the parallel animation of the four translation and
         // scale properties (SCALE_X and SCALE_Y).
