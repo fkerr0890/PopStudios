@@ -157,4 +157,19 @@
         android:layout_height="match_parent" />
 
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/deletethis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/fab_addGoal_content_desc"
+        app:layout_constraintBottom_toTopOf="@id/divider3"
+        android:tint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/baseline_add_black_18dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="startListActivity"
+        android:layout_marginRight="100dp" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

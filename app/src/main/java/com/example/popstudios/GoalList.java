@@ -1,10 +1,13 @@
 package com.example.popstudios;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.widget.TextView;
+
+import java.util.List;
 
 public class GoalList extends AppCompatActivity {
 
@@ -12,33 +15,39 @@ public class GoalList extends AppCompatActivity {
     TextView incompleteGoalsList;
     TextView completeGoalsList;
     String incompleteGoals;
-    String s1[];
+    String[] s1, s2, s3, s4;
     RecyclerView recyclerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_goal_list2);
+        setContentView(R.layout.recycler_view);
         recyclerView = findViewById(R.id.recyclerView);
-        s1 = getResources().getStringArray(R.array.incompleteGoalList);
 
+        dbHelper = new FeedReaderDbHelper(this);
+        setUpGoalList(dbHelper);
 
-        MyAdapter myAdapter = new MyAdapter(this,s1);
-//        completeGoalsList = findViewById(R.id.completeGoalsList);
-//        incompleteGoalsList = findViewById(R.id.incompleteGoalsList);
-
-//        completeGoalsList.setText(getGoalsList());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        MyAdapter myAdapter = new MyAdapter(this,s1,s2,s3,s4);
+        recyclerView.setAdapter(myAdapter);
     }
 
 
-//    GoalList(FeedReaderDbHelper dbHelper){
-//        this.dbHelper = dbHelper;
-//    }
-//    public String getGoalsList() {
-//        List<Goal> goalList = dbHelper.getGoalsFromDb();
-//        for (Goal goal : goalList) {
-//            incompleteGoals += "" + goal.name;
-//        }
-//        return incompleteGoals;
-//    }
+    public void setUpGoalList(FeedReaderDbHelper dbHelper) {
+        List<Goal> goalList = dbHelper.getGoalsFromDb();
+        int num = 0;
+        int listSize = goalList.size();
+        s1 = new String[listSize];
+        s2 = new String[listSize];
+        s3 = new String[listSize];
+        s4 = new String[listSize];
+        for (Goal goal : goalList) {
+           s1[num] = goal.name;
+           s2[num] = "Importance: " + goal.getGoalImportance();
+           s3[num] = "Difficulty: " + goal.getGoalDifficulty();
+           s4[num] = goal.getDescription();
+           num++;
+        }
+    }
 }
