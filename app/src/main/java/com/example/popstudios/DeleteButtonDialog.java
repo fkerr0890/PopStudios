@@ -50,7 +50,8 @@ public class DeleteButtonDialog extends AppCompatDialogFragment {
         void onNeutralClicked();
     }
 
-    // watches for exceptions and
+    // watches for exceptions. If one is found it handles it by throwing an exception and delivering
+    // a message to implement the proper listener
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
