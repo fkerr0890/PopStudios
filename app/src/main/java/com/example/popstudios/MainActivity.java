@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         View deleteButtonView = getDeleteView();
 
         // shrink the button
-        animateDelete(deleteButtonView,0f);
+        animate(deleteButtonView,0f, true);
 
         // us ID to delete from Database
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -246,14 +246,13 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             textView.setText(Objects.requireNonNull(goalById.get((long) view.getId())).getName());
             bubbleInfo.showAlignTop(view);
         }
-        animate(view,scale);
+        animate(view,scale, false);
     }
 
-    private void animate(View bubble, float finalScale) {
+    private void animate(final View bubble, float finalScale, final boolean deleting) {
         // Construct and run the parallel animation of the four translation and
         // scale properties (SCALE_X and SCALE_Y).
         AnimatorSet set = new AnimatorSet();
-
         set
                 .play(ObjectAnimator.ofFloat(bubble, View.SCALE_X,finalScale))
                 .with(ObjectAnimator.ofFloat(bubble,
@@ -265,6 +264,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             @Override
             public void onAnimationEnd(Animator animation) {
                 currentAnimator = null;
+                if (deleting) {
+                    ViewGroup parentView = (ViewGroup) bubble.getParent();
+                    parentView.removeView(bubble);
+                }
             }
 
             @Override
@@ -275,34 +278,4 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         set.start();
         currentAnimator = set;
     }
-
-    private void animateDelete(final View bubble, float finalScale) {
-        // Construct and run the parallel animation of the four translation and
-        // scale properties (SCALE_X and SCALE_Y).
-        AnimatorSet set = new AnimatorSet();
-
-        set
-                .play(ObjectAnimator.ofFloat(bubble, View.SCALE_X,finalScale))
-                .with(ObjectAnimator.ofFloat(bubble,
-                        View.SCALE_Y, finalScale));
-
-        set.setDuration(shortAnimationDuration);
-        set.setInterpolator(new DecelerateInterpolator());
-        set.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                currentAnimator = null;
-                ViewGroup parentView = (ViewGroup) bubble.getParent();
-                parentView.removeView(bubble);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                currentAnimator = null;
-            }
-        });
-        set.start();
-        currentAnimator = set;
-    }
-
 }
