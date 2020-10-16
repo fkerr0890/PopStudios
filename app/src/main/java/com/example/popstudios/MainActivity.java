@@ -95,15 +95,23 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         View deleteButtonView = getDeleteView();
 
         // shrink the button
-        animateDelete(deleteButtonView,0f);
+        animateDelete(deleteButtonView);
 
         // us ID to delete from Database
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String selection = FeedReaderContract.FeedEntry._ID + " = " + (long)deleteButtonId;
         db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, null);
-        // visually delete button by removing it from ViewGroup
-        // ViewGroup parentView = (ViewGroup) deleteButtonView.getParent();
-        // parentView.removeView(deleteButtonView);
+    }
+
+    @Override
+    public void onNeutralClicked() {
+        // get info from longClick
+        int deleteButtonId = getDeleteButtonId();
+        View deleteButtonView = getDeleteView();
+
+        // shrink the button
+        animateDelete(deleteButtonView);
+
     }
 
     @Override
@@ -276,7 +284,11 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         currentAnimator = set;
     }
 
-    private void animateDelete(final View bubble, float finalScale) {
+    // works the same as animate, but deletes the bubble from the screen after shrinking so it doesn't
+    // influence the placement of other bubbles. Doesn't need finalScale as an input, because when deleting,
+    // it will always be 0f
+    private void animateDelete(final View bubble) {
+        float finalScale = 0f;
         // Construct and run the parallel animation of the four translation and
         // scale properties (SCALE_X and SCALE_Y).
         AnimatorSet set = new AnimatorSet();
@@ -289,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         set.setDuration(shortAnimationDuration);
         set.setInterpolator(new DecelerateInterpolator());
         set.addListener(new AnimatorListenerAdapter() {
+            // When the animation is done, deletes the bubble from the screen
             @Override
             public void onAnimationEnd(Animator animation) {
                 currentAnimator = null;

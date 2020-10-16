@@ -15,17 +15,24 @@ public class DeleteButtonDialog extends AppCompatDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Delete Goal")
-                .setMessage("Do you want to remove this goal?")
+        builder.setTitle("Complete Goal")
+                .setMessage("Did you complete this goal?")
                 // Closes window and does nothing when user clicks cancel
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 })
+                // Calls listener onNeutralClicked
+                .setNeutralButton("Complete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onNeutralClicked();
+                    }
+                })
                 // Calls listener onYesClicked
-                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onYesClicked();
@@ -36,6 +43,7 @@ public class DeleteButtonDialog extends AppCompatDialogFragment {
 
     public interface DeleteButtonDialogListener {
         void onYesClicked();
+        void onNeutralClicked();
     }
 
     @Override

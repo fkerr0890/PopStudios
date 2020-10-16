@@ -1,3 +1,6 @@
+// This is a class for Goal objects. Goal objects are created when the user makes a new goal. They are
+// built using the information from input page and their information is added to a database
+
 package com.example.popstudios;
 
 import android.graphics.Color;
@@ -7,13 +10,15 @@ import java.util.List;
 
 public class Goal {
 
+    // variables used in a goal
     public String name;
     private final int goalImportance;
     private final int goalDifficulty;
     private final long id;
     private final String description;
+    private int completeStatus;
 
-    Goal(long id, String name, int goalImportance, int goalDifficulty, String description){
+    Goal(long id, String name, int goalImportance, int goalDifficulty, String description, int completeStatus){
         this.id = id;
         this.name = name;
         this.goalImportance = goalImportance;
@@ -21,6 +26,7 @@ public class Goal {
         this.description = description;
     }
 
+    // getters (and one setter) for goal information
     public long getGoalID(){return id;}
 
     public String getName(){
@@ -39,11 +45,21 @@ public class Goal {
         return description;
     }
 
+    public int getCompleteStatus() {
+        return completeStatus;
+    }
+
+    public void setCompleteStatus(int status) {
+        completeStatus = status;
+    }
+
+    // use information from user for importance and difficulty to calculate radius
     public int calculateRadius(){
         float radius = (Math.round(MainActivity.screenWidth)/(1f/((this.goalImportance + this.goalDifficulty + 3f) * 0.02f)));
         return Math.round(radius);
     }
 
+    // use the sum of importance + difficulty to determine what color the bubble will be
     public int calculateColor(){
         int color11 = Color.argb(255, 116, 0, 184);
         int color10 = Color.argb(255, 110, 23, 190);
