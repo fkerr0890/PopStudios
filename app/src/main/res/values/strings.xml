@@ -39,4 +39,6 @@
         <item>goal3</item>
         <item>goal4</item>
     </string-array>
+    <string name="tab1_text">Visual</string>
+    <string name="tab2_text">List</string>
 </resources>
