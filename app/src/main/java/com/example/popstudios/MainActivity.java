@@ -249,14 +249,13 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         animate(view,scale, false);
     }
 
-    private void animate(View bubble, float finalScale, final boolean deleting) {
+    private void animate(final View bubble, float finalScale, final boolean deleting) {
         // Construct and run the parallel animation of the four translation and
         // scale properties (SCALE_X and SCALE_Y).
         AnimatorSet set = new AnimatorSet();
-        final View bubbleFinal = bubble;
         set
-                .play(ObjectAnimator.ofFloat(bubbleFinal, View.SCALE_X,finalScale))
-                .with(ObjectAnimator.ofFloat(bubbleFinal,
+                .play(ObjectAnimator.ofFloat(bubble, View.SCALE_X,finalScale))
+                .with(ObjectAnimator.ofFloat(bubble,
                         View.SCALE_Y, finalScale));
 
         set.setDuration(shortAnimationDuration);
@@ -266,8 +265,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             public void onAnimationEnd(Animator animation) {
                 currentAnimator = null;
                 if (deleting) {
-                    ViewGroup parentView = (ViewGroup) bubbleFinal.getParent();
-                    parentView.removeView(bubbleFinal);
+                    ViewGroup parentView = (ViewGroup) bubble.getParent();
+                    parentView.removeView(bubble);
                 }
             }
 
