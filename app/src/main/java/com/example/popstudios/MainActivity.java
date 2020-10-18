@@ -188,6 +188,11 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         startActivity(inputActivityIntent);
     }
 
+    public void startListActivity(View view) {
+        Intent listActivityIntent = new Intent(this,GoalList.class);
+        startActivity(listActivityIntent);
+    }
+
     public void startHelp(View view){
         Intent helpActivityIntent = new Intent(this,FAQActivity.class);
         startActivity(helpActivityIntent);
@@ -220,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     public void showInfo(View view) {
         Goal goal = goalById.get((long)view.getId());
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(goal.getDescription()).setTitle("Goal Info");
+        builder.setMessage(goal.getDescription()).setTitle(goal.name);
         AlertDialog dialog = builder.create();
         dialog.show();
     }

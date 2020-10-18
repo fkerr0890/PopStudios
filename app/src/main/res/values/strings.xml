@@ -27,6 +27,13 @@
     <string name="answer4">The color and size of the bubble will illustrate the goal’s
         importance and difficulty rating. The larger and darker the bubble equates with
         a higher the importance and difficulty rating.</string>
+    <string name="importance_rating">Importance Rating:</string>
+    <string name="difficulty_rating">Difficulty Rating:</string>
+    <string name="name">Name</string>
+
+
+
     <string name="tab1_text">Visual</string>
     <string name="tab2_text">List</string>
+    <string name="description">Description</string>
 </resources>
