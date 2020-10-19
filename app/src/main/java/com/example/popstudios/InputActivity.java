@@ -20,17 +20,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class InputActivity extends AppCompatActivity {
-    // Variables that appear on the user screen
     SeekBar importanceBar, difficultyBar;
     EditText editGoal, editDescription;
     Button inputAddBttn;
     TextView inputName;
 
-    // Variables for information taken from user input
     String goalName, goalDescriptionStr;
-    int goalImportanceNum,goalDifficultyNum;
+    int goalImportanceNum, goalDifficultyNum;
+    int goalCompleteStatus;
 
-    // Names class that interacts with database
     FeedReaderDbHelper dbHelper;
 
     @Override
@@ -135,7 +133,7 @@ public class InputActivity extends AppCompatActivity {
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
-
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalCompleteStatus);
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
@@ -155,6 +153,7 @@ public class InputActivity extends AppCompatActivity {
         newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
         newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
         newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
+        newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalCompleteStatus);
         db.update(FeedReaderContract.FeedEntry.TABLE_NAME, newValues,
                 FeedReaderContract.FeedEntry._ID + " = " + goalID,null);
     }

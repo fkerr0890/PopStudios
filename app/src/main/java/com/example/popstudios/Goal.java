@@ -16,14 +16,15 @@ public class Goal {
     private final int goalDifficulty;
     private final long id;
     private final String description;
-    private int completeStatus;
+    private int goalStatus;
 
-    Goal(long id, String name, int goalImportance, int goalDifficulty, String description, int completeStatus){
+    Goal(long id, String name, int goalImportance, int goalDifficulty, String description, int goalStatus){
         this.id = id;
         this.name = name;
         this.goalImportance = goalImportance;
         this.goalDifficulty = goalDifficulty;
         this.description = description;
+        this.goalStatus = goalStatus;
     }
 
     // getters (and one setter) for goal information
@@ -45,12 +46,11 @@ public class Goal {
         return description;
     }
 
-    public int getCompleteStatus() {
-        return completeStatus;
+    public int getGoalStatus() {
+        return goalStatus;
     }
-
-    public void setCompleteStatus(int status) {
-        completeStatus = status;
+    public void setGoalStatus(int status) {
+        goalStatus = status;
     }
 
     // use information from user for importance and difficulty to calculate radius
@@ -89,5 +89,4 @@ public class Goal {
         int rating = this.goalImportance + this.goalDifficulty;
         return colorList.get(rating);
     }
-
 }

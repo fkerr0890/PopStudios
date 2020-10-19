@@ -9,6 +9,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
@@ -63,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             // set info of button to be deleted (view and ID)
             setDeleteButtonId(buttonId);
             setDeleteView(v);
-            // System.out.println(buttonId);
             openDialog();
             return true;
         }
@@ -112,10 +112,30 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         // get info from longClick
         int deleteButtonId = getDeleteButtonId();
         View deleteButtonView = getDeleteView();
+        Goal goal = goalById.get((long)deleteButtonId);
 
+        // I followed the recommendation of java, but I think that seems risky? Maybe if
+//        assert goal != null;
+//        goal.setGoalStatus(1);
         // shrink the button
         animate(deleteButtonView,0f, true);
 
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+//        // New value for completed Status
+//        int goalStatus = 1;
+//        ContentValues values = new ContentValues();
+//        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalStatus);
+//
+//        // Which row to update
+//        String selection = FeedEntry.COLUMN_NAME_STATUS + " LIKE ?" ;
+//        int[] selectionArgs = { 0 };
+//
+//        int count = db.update(
+//                FeedReaderDbHelper.FeedEntry.TABLE_NAME,
+//                values,
+//                selection,
+//                selectionArgs);
     }
 
     @Override
