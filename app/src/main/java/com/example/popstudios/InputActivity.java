@@ -118,6 +118,7 @@ public class InputActivity extends AppCompatActivity {
         goalImportanceNum = importanceBar.getProgress();
         goalDifficultyNum = difficultyBar.getProgress();
         goalDescriptionStr = editDescription.getText().toString();
+        // goalCompleteStatus = 0;
 
         if (goalName.isEmpty()){
             Toast.makeText(InputActivity.this, "Please name your goal",Toast.LENGTH_SHORT).show();
@@ -131,11 +132,8 @@ public class InputActivity extends AppCompatActivity {
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
-        db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalCompleteStatus);
-
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
+        db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
         return true;
     }
 
