@@ -115,28 +115,23 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         Goal goal = goalById.get((long)deleteButtonId);
 
         // I followed the recommendation of java, but I think that seems risky? Maybe if
-        assert goal != null;
-        goal.setGoalStatus(1);
+//        assert goal != null;
+//        goal.setGoalStatus(1);
         // shrink the button
         animate(deleteButtonView,0f, true);
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+        // New value for completed Status
+        int goalStatus = 1;
 
-//        // New value for completed Status
-//        int goalStatus = 1;
-//        ContentValues values = new ContentValues();
-//        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalStatus);
-//
-//        // Which row to update
-//        String selection = FeedEntry.COLUMN_NAME_STATUS + " LIKE ?" ;
-//        int[] selectionArgs = { 0 };
-//
-//        int count = db.update(
-//                FeedReaderDbHelper.FeedEntry.TABLE_NAME,
-//                values,
-//                selection,
-//                selectionArgs);
+        System.out.println(goal.getGoalStatus());
+        ContentValues newValues = new ContentValues();
+        newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalStatus);
+        db.update(FeedReaderContract.FeedEntry.TABLE_NAME, newValues,
+                FeedReaderContract.FeedEntry._ID + " = " + goal.getGoalID(),null);
+        goal.setGoalStatus(1);
+        System.out.println(goal.getGoalStatus());
     }
 
     @Override

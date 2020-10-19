@@ -132,7 +132,7 @@ public class InputActivity extends AppCompatActivity {
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
-        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalCompleteStatus);
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, 0);
         db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
         return true;
     }
