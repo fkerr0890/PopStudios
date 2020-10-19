@@ -115,12 +115,13 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         Goal goal = goalById.get((long)deleteButtonId);
 
         // I followed the recommendation of java, but I think that seems risky? Maybe if
-//        assert goal != null;
-//        goal.setGoalStatus(1);
+        assert goal != null;
+        goal.setGoalStatus(1);
         // shrink the button
         animate(deleteButtonView,0f, true);
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+
 
 //        // New value for completed Status
 //        int goalStatus = 1;

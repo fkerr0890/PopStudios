@@ -118,7 +118,7 @@ public class InputActivity extends AppCompatActivity {
         goalImportanceNum = importanceBar.getProgress();
         goalDifficultyNum = difficultyBar.getProgress();
         goalDescriptionStr = editDescription.getText().toString();
-        // goalCompleteStatus = 0;
+        goalCompleteStatus = 0;
 
         if (goalName.isEmpty()){
             Toast.makeText(InputActivity.this, "Please name your goal",Toast.LENGTH_SHORT).show();
