@@ -1,8 +1,9 @@
 package com.example.popstudios;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -11,12 +12,9 @@ import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -24,8 +22,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.popstudios.databinding.ActivityMainBinding;
-import com.example.popstudios.databinding.BubbleBinding;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import com.skydoves.balloon.ArrowConstraints;
 import com.skydoves.balloon.ArrowOrientation;
 import com.skydoves.balloon.Balloon;
@@ -41,16 +38,15 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener, DeleteButtonDialog.DeleteButtonDialogListener {
 //    private static final String TAG = "MyActivity";
     ActivityMainBinding main;
-    FeedReaderDbHelper dbHelper;
+    public static FeedReaderDbHelper dbHelper;
     private Animator currentAnimator;
     private int shortAnimationDuration;
     private List<Integer> listOfExpandedBubbles;
     public static float screenWidth;
-    private Map<Long,Goal> goalById;
+    public static Map<Long,Goal> goalById;
     int deleteButtonId;
     View deleteView;
 
-    FloatingActionButton firstBubble;
     Random random;
 
     // Creates a new listener for when user long clicks
@@ -104,6 +100,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String selection = FeedReaderContract.FeedEntry._ID + " = " + (long)deleteButtonId;
         db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, null);
+        GoalListFragment.addedGoals.remove((long)deleteButtonId);
+        // visually delete button by removing it from ViewGroup
+        // ViewGroup parentView = (ViewGroup) deleteButtonView.getParent();
+        // parentView.removeView(deleteButtonView);
     }
 
     // Called when the user clicks "completed" in dialog
@@ -148,15 +148,19 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         screenWidth = metrics.widthPixels;
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        ViewPager viewPager = findViewById(R.id.pager);
+        setupViewPager(viewPager);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(0).setText(R.string.tab1_text);
+        tabLayout.getTabAt(1).setText(R.string.tab2_text);
+
         dbHelper = new FeedReaderDbHelper(this);
         goalById = new HashMap<>();
-        firstBubble = null;
-        random = new Random();
-        List<Goal> goals = dbHelper.getGoalsFromDb();
-        for (Goal goal : goals) {
-            goalById.put(goal.getGoalID(),goal);
-            addBubble(goal);
-        }
+
+
+
     }
 
     private Balloon createBalloon() {
@@ -177,40 +181,9 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 .build();
     }
 
-    private void addBubble(Goal goal) {
-        FloatingActionButton bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
-        CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.WRAP_CONTENT,
-                CoordinatorLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER;
-        params.width = goal.calculateRadius() * 2;
-        params.height = goal.calculateRadius() * 2;
-        bubble.setLayoutParams(params);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) bubble
-                .setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
-        bubble.setId((int) goal.getGoalID());
-        bubble.setContentDescription("This is a goal. Name: " + goal.getName());
-        bubble.setOnLongClickListener(listener);
-        if (firstBubble == null) firstBubble = bubble;
-        else {
-            double angle = random.nextDouble() * 2 * Math.PI;
-            bubble.setTranslationX(((float) bubble.getLayoutParams().width/2 +
-                    (float) firstBubble.getLayoutParams().width/2) * (float) Math.cos(angle));
-            bubble.setTranslationY(((float) bubble.getLayoutParams().width/2 +
-                    (float) firstBubble.getLayoutParams().width/2) * (float) Math.sin(angle));
-            System.out.println(firstBubble.getLayoutParams().width);
-        }
-        main.bubbleLayout.addView(bubble);
-    }
-
     public void startInputActivity(View view) {
         Intent inputActivityIntent = new Intent(this,InputActivity.class);
         startActivity(inputActivityIntent);
-    }
-
-    public void startListActivity(View view) {
-        Intent listActivityIntent = new Intent(this,GoalList.class);
-        startActivity(listActivityIntent);
     }
 
     public void startHelp(View view){
@@ -250,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         dialog.show();
     }
 
-    // Overriden method for long click
     @Override
     public boolean onLongClick(View v) {
         return false;
@@ -319,4 +291,13 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         set.start();
         currentAnimator = set;
     }
+
+    private void setupViewPager(ViewPager viewPager) {
+        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        adapter.addFragment(new BubbleFragment());
+        adapter.addFragment(new GoalListFragment());
+        viewPager.setAdapter(adapter);
+    }
+
+
 }
