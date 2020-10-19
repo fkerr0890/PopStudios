@@ -63,7 +63,7 @@ public class BubbleFragment extends Fragment {
     private void addBubbles(CoordinatorLayout layout) {
         List<Goal> goals = dbHelper.getGoalsFromDb();
         for (Goal goal : goals) {
-            if (!addedGoals.contains(goal.getGoalID())) {
+            if (!addedGoals.contains(goal.getGoalID()) && goal.getGoalStatus()==0) {
                 goalById.put(goal.getGoalID(), goal);
                 addBubble(goal, layout);
                 addedGoals.add(goal.getGoalID());

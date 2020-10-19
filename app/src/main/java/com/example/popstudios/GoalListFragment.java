@@ -69,12 +69,13 @@ public class GoalListFragment extends Fragment {
         s4 = new String[listSize];
         Iterator<Long> addedGoalsIterator = addedGoals.iterator();
         for (Goal goal : goalList) {
-            if (!addedGoals.contains(goal.getGoalID())) {
-                setStrings(goal,num);
-                addedGoals.add(goal.getGoalID());
+            if(goal.getGoalStatus()==0) {
+                if (!addedGoals.contains(goal.getGoalID())) {
+                    setStrings(goal, num);
+                    addedGoals.add(goal.getGoalID());
+                } else
+                    setStrings(MainActivity.goalById.get(addedGoalsIterator.next()), num);
             }
-            else
-                setStrings(MainActivity.goalById.get(addedGoalsIterator.next()),num);
             num++;
         }
     }

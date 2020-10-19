@@ -122,20 +122,16 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-//        // New value for completed Status
-//        int goalStatus = 1;
-//        ContentValues values = new ContentValues();
-//        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalStatus);
-//
-//        // Which row to update
-//        String selection = FeedEntry.COLUMN_NAME_STATUS + " LIKE ?" ;
-//        int[] selectionArgs = { 0 };
-//
-//        int count = db.update(
-//                FeedReaderDbHelper.FeedEntry.TABLE_NAME,
-//                values,
-//                selection,
-//                selectionArgs);
+        // New value for completed Status
+        int goalStatus = 1;
+
+        System.out.println(goal.getGoalStatus());
+        ContentValues newValues = new ContentValues();
+        newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalStatus);
+        db.update(FeedReaderContract.FeedEntry.TABLE_NAME, newValues,
+                FeedReaderContract.FeedEntry._ID + " = " + goal.getGoalID(),null);
+        goal.setGoalStatus(1);
+        System.out.println(goal.getGoalStatus());
     }
 
     @Override

@@ -25,6 +25,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "FeedReader.db";
+    public static Object FeedEntry;
 
     public FeedReaderDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -81,10 +82,58 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION));
             int goalStatus = cursor.getInt(
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS));
-            Goal newGoal = new Goal(itemId, goalName, goalImportance, goalDifficulty, goalDescription, goalStatus);
-            goals.add(newGoal);
+            if (goalStatus == 0) {
+                Goal newGoal = new Goal(itemId, goalName, goalImportance, goalDifficulty, goalDescription, goalStatus);
+                goals.add(newGoal);
+            }
         }
         cursor.close();
         return goals;
     }
+
+//    public List<Goal> getCompleteGoalsFromDb() {
+//        // Reads database
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        String[] projection = {
+//                BaseColumns._ID,
+//                FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME,
+//                FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE,
+//                FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY,
+//                FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION,
+//                FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS
+//        };
+//
+//
+//        Cursor cursor = db.query(
+//                FeedReaderContract.FeedEntry.TABLE_NAME,
+//                projection,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null
+//        );
+//
+//        List<Goal> goals = new LinkedList<>();
+//        while (cursor.moveToNext()) {
+//            long itemId = cursor.getLong(
+//                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry._ID));
+//            String goalName = cursor.getString(
+//                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME));
+//            int goalImportance = cursor.getInt(
+//                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE));
+//            int goalDifficulty = cursor.getInt(
+//                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY));
+//            String goalDescription = cursor.getString(
+//                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION));
+//            int goalStatus = cursor.getInt(
+//                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS));
+//            if (goalStatus == 1) {
+//                Goal newGoal = new Goal(itemId, goalName, goalImportance, goalDifficulty, goalDescription, goalStatus);
+//                goals.add(newGoal);
+//            }
+//        }
+//        cursor.close();
+//        return goals;
+//    }
 }
