@@ -1,6 +1,5 @@
 package com.example.popstudios;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -53,7 +52,7 @@ public class InputActivity extends AppCompatActivity {
             importanceBar.setProgress(goalImportance);
             difficultyBar.setProgress(goalDifficulty);
             editDescription.setText(description);
-            inputAddBttn.setText("Save");
+            inputAddBttn.setText(R.string.save_button_text);
 
             inputAddBttn.setOnClickListener(new View.OnClickListener(){
 
@@ -78,7 +77,6 @@ public class InputActivity extends AppCompatActivity {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar importanceBar) {
-                    Toast.makeText(InputActivity.this, "Importance Rating: " + importanceBar.getProgress(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -94,7 +92,6 @@ public class InputActivity extends AppCompatActivity {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar difficultyBar) {
-                    Toast.makeText(InputActivity.this, "Difficulty Rating: " + difficultyBar.getProgress(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -102,14 +99,15 @@ public class InputActivity extends AppCompatActivity {
     }
 
     public void startMainActivity(View view) {
-        if (writeSql(view)) {
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            startActivity(mainActivityIntent);
+        if (writeSql()) {
+/*            Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            startActivity(mainActivityIntent);*/
+            finish();
         }
     }
 
 
-    private boolean writeSql(View view) {
+    private boolean writeSql() {
         goalName = editGoal.getText().toString();
         goalImportanceNum = importanceBar.getProgress();
         goalDifficultyNum = difficultyBar.getProgress();
@@ -127,10 +125,7 @@ public class InputActivity extends AppCompatActivity {
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_IMPORTANCE, goalImportanceNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DIFFICULTY, goalDifficultyNum);
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION, goalDescriptionStr);
-
-
-// Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
+        db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
         return true;
     }
 

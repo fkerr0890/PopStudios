@@ -9,6 +9,7 @@
     <string name="add_goal">Add Goal</string>
     <string name="create_goal">Create Goal</string>
     <string name="edit_goal">Edit Goal</string>
+    <string name="save_button_text">Save</string>
     <string name="balloon_button_description">Edit</string>
     <string name="faq">FAQ</string>
     <string name="question1">How do I create a goal?</string>

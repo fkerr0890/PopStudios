@@ -46,7 +46,7 @@
         android:ems="10"
         android:fontFamily="sans-serif-condensed-light"
         android:hint="@string/goal_input_label"
-        android:inputType="text" />
+        android:inputType="textCapWords" />
 
     <TextView
         android:id="@+id/goalImportance"
