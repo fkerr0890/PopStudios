@@ -175,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 .setLayout(R.layout.balloon_layout)
                 .setArrowSize(10)
                 .setArrowOrientation(ArrowOrientation.BOTTOM)
-                .setArrowConstraints(ArrowConstraints.ALIGN_ANCHOR)
                 .setArrowPosition(0.5f)
                 .setArrowVisible(true)
                 .setWidthRatio(0.35f)
@@ -275,7 +274,9 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             infoButton.setId(view.getId());
         TextView textView = bubbleInfo.getContentView().findViewById(R.id.textView);
         textView.setText(Objects.requireNonNull(goalById.get((long) view.getId())).getName());
-        bubbleInfo.showAlignTop(view);
+        Rect rect = new Rect();
+        view.getHitRect(rect);
+        bubbleInfo.showAlignTop(view, 160,30);
     }
 
     private List<View> findIntersectingBubbles(View bubble1) {

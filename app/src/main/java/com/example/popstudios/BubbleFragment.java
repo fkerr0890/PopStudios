@@ -57,12 +57,12 @@ public class BubbleFragment extends Fragment {
         bubbles = new ArrayList<>();
         fragment = inflater.inflate(R.layout.fragment_bubble,container,false);
         layout = fragment.findViewById(R.id.bubble_layout);
-        setupLayoutListener(fragment);
+        setupLayoutListener(fragment, null);
         addBubbles();
         return fragment;
     }
 
-    private void setupLayoutListener(final View view) {
+    private void setupLayoutListener(final View view, final View addedBubble) {
         view.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
 
@@ -72,8 +72,12 @@ public class BubbleFragment extends Fragment {
                         width = view.getWidth();
                         height = view.getHeight();
 /*                        scaleBubbles();*/
-                        for (View bubble : bubbles) {
-                            layoutBubble(bubble);
+                        if (addedBubble != null)
+                            layoutBubble(addedBubble);
+                        else {
+                            for (View bubble : bubbles) {
+                                layoutBubble(bubble);
+                            }
                         }
                     }
                 }
@@ -93,7 +97,7 @@ public class BubbleFragment extends Fragment {
         }
     }
 
-    private void addBubble(Goal goal) {
+    private View addBubble(Goal goal) {
         View bubble = BubbleBinding.inflate(getLayoutInflater()).getRoot();
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -109,6 +113,7 @@ public class BubbleFragment extends Fragment {
         bubble.setOnLongClickListener(listener);
         layout.addView(bubble);
         bubbles.add(bubble);
+        return bubble;
     }
 
     private void layoutBubble(View bubble) {
@@ -202,7 +207,15 @@ public class BubbleFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        setupLayoutListener(fragment);
-        addBubbles();
+        Goal addedGoal = null;
+        for (Goal goal : dbHelper.getGoalsFromDb()) {
+            if (!addedGoals.contains(goal.getGoalID()))
+                addedGoal = goal;
+        }
+        if (addedGoal != null) {
+            goalById.put(addedGoal.getGoalID(), addedGoal);
+            setupLayoutListener(fragment, addBubble(addedGoal));
+            addedGoals.add(addedGoal.getGoalID());
+        }
     }
 }
