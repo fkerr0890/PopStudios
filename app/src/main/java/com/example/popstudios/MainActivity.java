@@ -14,7 +14,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Rect;
-import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -25,7 +24,6 @@ import android.widget.TextView;
 
 import com.example.popstudios.databinding.ActivityMainBinding;
 import com.google.android.material.tabs.TabLayout;
-import com.skydoves.balloon.ArrowConstraints;
 import com.skydoves.balloon.ArrowOrientation;
 import com.skydoves.balloon.Balloon;
 import com.skydoves.balloon.BalloonAnimation;
@@ -35,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener, DeleteButtonDialog.DeleteButtonDialogListener {
     //    private static final String TAG = "MyActivity";
@@ -45,12 +42,12 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private int shortAnimationDuration;
     private List<Integer> listOfExpandedBubbles;
     public static float screenWidth;
-    private static float screenHeight;
     public static Map<Long,Goal> goalById;
     int deleteButtonId;
     View deleteView;
     private BubbleFragment bubbleFragment;
     private static int moveCount;
+    boolean itHitTheWall;
 
     // Creates a new listener for when user long clicks
     View.OnLongClickListener listener = new View.OnLongClickListener() {
@@ -105,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         String selection = FeedReaderContract.FeedEntry._ID + " = " + (long)deleteButtonId;
         db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, null);
         GoalListFragment.addedGoals.remove((long)deleteButtonId);
+        BubbleFragment.addedGoals.remove((long)deleteButtonId);
         // visually delete button by removing it from ViewGroup
         // ViewGroup parentView = (ViewGroup) deleteButtonView.getParent();
         // parentView.removeView(deleteButtonView);
@@ -148,8 +146,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         screenWidth = metrics.widthPixels;
-        screenHeight = metrics.heightPixels;
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        itHitTheWall = false;
 
         ViewPager viewPager = findViewById(R.id.pager);
         setupViewPager(viewPager);
@@ -174,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 .setLayout(R.layout.balloon_layout)
                 .setArrowSize(10)
                 .setArrowOrientation(ArrowOrientation.BOTTOM)
-                .setArrowConstraints(ArrowConstraints.ALIGN_ANCHOR)
                 .setArrowPosition(0.5f)
                 .setArrowVisible(true)
                 .setWidthRatio(0.35f)
@@ -238,6 +235,15 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         if (currentAnimator != null)
             currentAnimator.cancel();
         moveCount = 0;
+        if (listOfExpandedBubbles.size() != 0) {
+            for (Integer id : listOfExpandedBubbles) {
+                View expandedBubble = findViewById(id);
+                if (expandedBubble != view) {
+                    listOfExpandedBubbles.remove(id);
+                    animate(findViewById(id), 1f, false);
+                }
+            }
+        }
         // Set the pivot point for SCALE_X and SCALE_Y transformations
         // to the top-left corner of the zoomed-in view (the default
         // is the center of the view).
@@ -251,18 +257,23 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         else {
             scale = (float)(2*Math.pow(30,(view.getWidth()*0.001-0.2)*-1)+1);
             listOfExpandedBubbles.add(view.getId());
-            Balloon bubbleInfo = createBalloon();
-            ImageButton editButton = bubbleInfo.getContentView().findViewById(R.id.editButton);
-            if (editButton != null)
-                editButton.setId(view.getId());
-            ImageButton infoButton = bubbleInfo.getContentView().findViewById(R.id.infoButton);
-            if (infoButton != null)
-                infoButton.setId(view.getId());
-            TextView textView = bubbleInfo.getContentView().findViewById(R.id.textView);
-            textView.setText(Objects.requireNonNull(goalById.get((long) view.getId())).getName());
-            bubbleInfo.showAlignTop(view);
         }
         animate(view,scale, false);
+    }
+
+    private void addBalloon(View view) {
+        Balloon bubbleInfo = createBalloon();
+        ImageButton editButton = bubbleInfo.getContentView().findViewById(R.id.editButton);
+        if (editButton != null)
+            editButton.setId(view.getId());
+        ImageButton infoButton = bubbleInfo.getContentView().findViewById(R.id.infoButton);
+        if (infoButton != null)
+            infoButton.setId(view.getId());
+        TextView textView = bubbleInfo.getContentView().findViewById(R.id.textView);
+        textView.setText(Objects.requireNonNull(goalById.get((long) view.getId())).getName());
+        Rect rect = new Rect();
+        view.getHitRect(rect);
+        bubbleInfo.showAlignTop(view, 160,30);
     }
 
     private List<View> findIntersectingBubbles(View bubble1) {
@@ -272,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         for (View bubble2 : bubbleFragment.getBubbles()) {
             Rect bubble2Rect = new Rect();
             bubble2.getHitRect(bubble2Rect);
-            if (bubble1 != bubble2 && circlesIntersect(bubble1Rect.centerX(),bubble1Rect.centerY(),bubble2Rect.centerX(),bubble2Rect.centerY(),bubble1Rect.width()/2f,bubble2Rect.width()/2f, 3/(moveCount*0.20+0.5)))
+            if (bubble1 != bubble2 && circlesIntersect(bubble1Rect.centerX(),bubble1Rect.centerY(),bubble2Rect.centerX(),bubble2Rect.centerY(),bubble1Rect.width()/2f,bubble2Rect.width()/2f, 3/(moveCount*0.20+0.2)))
                 result.add(bubble2);
         }
         return result;
@@ -281,10 +292,13 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     public static boolean circlesIntersect(float x1, float y1, float x2, float y2, float r1, float r2, double amountOverlap) {
         float distSq = (float)(Math.pow(x1 - x2,2) + Math.pow(y1 - y2,2));
         float radSumSq = (float)Math.pow(r1 + r2,2);
+        if ((int)distSq == 0)
+            return true;
         return distSq <= radSumSq && radSumSq - distSq >= radSumSq/(amountOverlap);
     }
 
     private void dodgeEachOther(View bubble1, View bubble2) {
+        bubble2.bringToFront();
         Rect bubble1Rect = new Rect();
         bubble1.getHitRect(bubble1Rect);
         Rect bubble2Rect = new Rect();
@@ -308,6 +322,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
             finalX = Math.min(Math.max(0,finalX),bubbleFragment.getWidth()-bubble2.getWidth());
             finalY = Math.min(Math.max(0,finalY),bubbleFragment.getHeight()-bubble2.getHeight());
+            if (finalX == 0 || finalX == bubbleFragment.getWidth()-bubble2.getWidth() || finalY == 0 || finalY == bubbleFragment.getHeight()-bubble2.getHeight())
+                itHitTheWall = true;
             animate(bubble2, finalX, finalY);
         }
     }
@@ -341,6 +357,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                             dodgeEachOther(bubble,intersectingBubble);
                         moveCount++;
                     }
+                    if (listOfExpandedBubbles.contains(bubble.getId()))
+                        addBalloon(bubble);
                 }
 
             }
@@ -366,10 +384,16 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             public void onAnimationEnd(Animator animation) {
                 for (View intersectingBubble : findIntersectingBubbles(bubble)) {
                     int numBubbles = bubbleFragment.getBubbles().size();
-                    if (moveCount < numBubbles*numBubbles)
-                        dodgeEachOther(bubble,intersectingBubble);
+                    if (moveCount < numBubbles*numBubbles) {
+                        if (itHitTheWall)
+                            itHitTheWall = false;
+                        else
+                            dodgeEachOther(bubble, intersectingBubble);
+                    }
                     moveCount++;
                 }
+/*                if (listOfExpandedBubbles.contains(bubble.getId()))
+                    addBalloon(bubble);*/
             }
 
         });
