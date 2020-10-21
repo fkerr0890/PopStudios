@@ -22,10 +22,11 @@ import static com.example.popstudios.MainActivity.goalById;
 import static com.example.popstudios.MainActivity.dbHelper;
 
 public class BubbleFragment extends Fragment {
-    private List<Long> addedGoals;
+    public static List<Long> addedGoals;
     private float width;
     private float height;
     private ViewGroup layout;
+    private View fragment;
     private List<View> bubbles;
 
     View.OnLongClickListener listener = new View.OnLongClickListener() {
@@ -54,13 +55,11 @@ public class BubbleFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         addedGoals = new ArrayList<>();
         bubbles = new ArrayList<>();
-        View view = inflater.inflate(R.layout.fragment_bubble,container,false);
-        layout = view.findViewById(R.id.bubble_layout);
-        setupLayoutListener(view);
+        fragment = inflater.inflate(R.layout.fragment_bubble,container,false);
+        layout = fragment.findViewById(R.id.bubble_layout);
+        setupLayoutListener(fragment);
         addBubbles();
-        /*        scaleBubbles();*/
-        System.out.println("DONE WITH LAYOUT");
-        return view;
+        return fragment;
     }
 
     private void setupLayoutListener(final View view) {
@@ -72,7 +71,7 @@ public class BubbleFragment extends Fragment {
                         view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         width = view.getWidth();
                         height = view.getHeight();
-                        scaleBubbles();
+/*                        scaleBubbles();*/
                         for (View bubble : bubbles) {
                             layoutBubble(bubble);
                         }
@@ -128,7 +127,7 @@ public class BubbleFragment extends Fragment {
         for (View otherBubble : bubbles) {
             Rect bubble2Rect = new Rect();
             otherBubble.getHitRect(bubble2Rect);
-            if (bubble != otherBubble && MainActivity.circlesIntersect(bubble1Rect.centerX(),bubble1Rect.centerY(),bubble2Rect.centerX(),bubble2Rect.centerY(),bubble1Rect.width()/2f,bubble2Rect.width()/2f,Double.POSITIVE_INFINITY)) {
+            if (bubble != otherBubble && MainActivity.circlesIntersect(bubble1Rect.centerX(),bubble1Rect.centerY(),bubble2Rect.centerX(),bubble2Rect.centerY(),bubble1Rect.width()/2f,bubble2Rect.width()/2f,6)) {
                 if (bubble.getX() + (float) bubble.getWidth()/2 < otherBubble.getX() +
                         (float) otherBubble.getWidth()/2)
                     bubble.setX(otherBubble.getX() - bubble.getWidth() * (float) 1.1);
@@ -154,7 +153,7 @@ public class BubbleFragment extends Fragment {
         for (View otherBubble : bubbles) {
             Rect bubble2Rect = new Rect();
             otherBubble.getHitRect(bubble2Rect);
-            if (bubble != otherBubble && MainActivity.circlesIntersect(bubble1Rect.centerX(),bubble1Rect.centerY(),bubble2Rect.centerX(),bubble2Rect.centerY(),bubble1Rect.width()/2f,bubble2Rect.width()/2f,Double.POSITIVE_INFINITY))
+            if (bubble != otherBubble && MainActivity.circlesIntersect(bubble1Rect.centerX(),bubble1Rect.centerY(),bubble2Rect.centerX(),bubble2Rect.centerY(),bubble1Rect.width()/2f,bubble2Rect.width()/2f,6))
                 return false;
         }
 
@@ -203,6 +202,7 @@ public class BubbleFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        setupLayoutListener(fragment);
         addBubbles();
     }
 }
