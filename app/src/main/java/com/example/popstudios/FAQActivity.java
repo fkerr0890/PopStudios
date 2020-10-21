@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 public class FAQActivity extends AppCompatActivity {
 
+    //Sets up FAQ page
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

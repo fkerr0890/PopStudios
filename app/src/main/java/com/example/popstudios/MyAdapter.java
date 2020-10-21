@@ -11,9 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
+    //String arrays that hold goal data
     String[] nameData, descriptionData, importanceData, difficultyData;
     Context context;
 
+    //Used to manage view holder objects
     public MyAdapter(Context ct, String[] s1, String[] s2, String[] s3, String[] s4){
         context = ct;
         nameData = s1;
@@ -43,7 +45,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return nameData.length;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView listName,listImportance,listDifficulty,listDescription;
 
