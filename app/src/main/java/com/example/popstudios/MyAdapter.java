@@ -20,7 +20,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         importanceData = s2;
         difficultyData = s3;
         descriptionData = s4;
-}
+    }
 
     @NonNull
     @Override

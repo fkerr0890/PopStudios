@@ -8,18 +8,23 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
+
+import org.jetbrains.annotations.NotNull;
 
 public class DeleteButtonDialog extends AppCompatDialogFragment {
     // creates listener to allow user to choose yes or cancel in dialog
     private DeleteButtonDialogListener listener;
 
+    @NotNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Complete Goal")
-                .setMessage("Did you complete this goal?")
+        MainActivity mainActivity = (MainActivity)getActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+        builder.setTitle("Complete/Delete Goal")
+                .setMessage("Do you want to complete or delete \"" + MainActivity.goalById.get((long)mainActivity.getDeleteView().getId()).getName()+"\"?")
                 // Closes window and does nothing when user clicks cancel
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -53,7 +58,7 @@ public class DeleteButtonDialog extends AppCompatDialogFragment {
     // watches for exceptions. If one is found it handles it by throwing an exception and delivering
     // a message to implement the proper listener
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
 
         try {
