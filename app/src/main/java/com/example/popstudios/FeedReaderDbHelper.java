@@ -79,10 +79,8 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DESCRIPTION));
             int goalStatus = cursor.getInt(
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS));
-            if (goalStatus == 0) {
-                Goal newGoal = new Goal(itemId, goalName, goalImportance, goalDifficulty, goalDescription, goalStatus);
-                goals.add(newGoal);
-            }
+            Goal newGoal = new Goal(itemId, goalName, goalImportance, goalDifficulty, goalDescription, goalStatus);
+            goals.add(newGoal);
         }
         cursor.close();
         return goals;

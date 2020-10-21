@@ -55,7 +55,7 @@ public class Goal {
 
     // use information from user for importance and difficulty to calculate radius
     public int calculateRadius(){
-        float radius = (Math.round(MainActivity.screenWidth)/(1f/((this.goalImportance + this.goalDifficulty + 3f) * 0.02f)));
+        float radius = (Math.round(MainActivity.screenWidth)/(1f/((this.goalImportance + this.goalDifficulty + 3f) * 0.015f)));
         return Math.round(radius);
     }
 
