@@ -17,6 +17,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -286,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         for (View bubble2 : bubbleFragment.getBubbles()) {
             Rect bubble2Rect = new Rect();
             bubble2.getHitRect(bubble2Rect);
-            if (bubble1 != bubble2 && circlesIntersect(bubble1Rect.centerX(),bubble1Rect.centerY(),bubble2Rect.centerX(),bubble2Rect.centerY(),bubble1Rect.width()/2f,bubble2Rect.width()/2f, 3/(moveCount*0.20+0.5)))
+            if (bubble1 != bubble2 && circlesIntersect(bubble1Rect.centerX(),bubble1Rect.centerY(),bubble2Rect.centerX(),bubble2Rect.centerY(),bubble1Rect.width()/2f,bubble2Rect.width()/2f, 3/(moveCount*0.20+0.2)))
                 result.add(bubble2);
         }
         return result;
@@ -295,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     public static boolean circlesIntersect(float x1, float y1, float x2, float y2, float r1, float r2, double amountOverlap) {
         float distSq = (float)(Math.pow(x1 - x2,2) + Math.pow(y1 - y2,2));
         float radSumSq = (float)Math.pow(r1 + r2,2);
+        Log.v("Overlap",Double.toString(amountOverlap));
         return distSq <= radSumSq && radSumSq - distSq >= radSumSq/(amountOverlap);
     }
 
