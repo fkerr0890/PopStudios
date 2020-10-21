@@ -14,10 +14,8 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Rect;
-import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -26,7 +24,6 @@ import android.widget.TextView;
 
 import com.example.popstudios.databinding.ActivityMainBinding;
 import com.google.android.material.tabs.TabLayout;
-import com.skydoves.balloon.ArrowConstraints;
 import com.skydoves.balloon.ArrowOrientation;
 import com.skydoves.balloon.Balloon;
 import com.skydoves.balloon.BalloonAnimation;
@@ -36,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener, DeleteButtonDialog.DeleteButtonDialogListener {
     //    private static final String TAG = "MyActivity";
@@ -296,7 +292,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     public static boolean circlesIntersect(float x1, float y1, float x2, float y2, float r1, float r2, double amountOverlap) {
         float distSq = (float)(Math.pow(x1 - x2,2) + Math.pow(y1 - y2,2));
         float radSumSq = (float)Math.pow(r1 + r2,2);
-        Log.v("Overlap",Double.toString(amountOverlap));
+        if ((int)distSq == 0)
+            return true;
         return distSq <= radSumSq && radSumSq - distSq >= radSumSq/(amountOverlap);
     }
 
