@@ -35,19 +35,16 @@
         android:layout_marginBottom="30dp"
         android:contentDescription="@string/fab_addGoal_content_desc"
         app:layout_constraintBottom_toTopOf="@id/divider3"
-        android:tint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_add_black_18dp"
+        app:srcCompat="@mipmap/baseline_add_white_18"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="startInputActivity"
-        android:layout_marginRight="40dp" />
+        android:onClick="startInputActivity" />
 
     <ImageButton
         android:id="@+id/helpBttn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:contentDescription="@string/helpBttn_content_desc"
@@ -111,8 +108,7 @@
         android:background="?android:attr/listDivider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/appName"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
-        android:layout_marginRight="10dp" />
+        app:layout_constraintBottom_toTopOf="@id/guideline" />
 
     <View
         android:id="@+id/divider5"
@@ -122,8 +118,7 @@
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/appName"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
-        android:layout_marginLeft="10dp" />
+        app:layout_constraintBottom_toTopOf="@id/guideline" />
 
     <androidx.constraintlayout.widget.Guideline
         android:layout_width="wrap_content"
@@ -149,10 +144,5 @@
         android:id="@+id/guideline4"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.95"/>
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/bubble_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
