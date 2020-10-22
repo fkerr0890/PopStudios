@@ -147,8 +147,6 @@ public class BubbleFragment extends Fragment {
 
                 else layoutBubble(bubble);
             }
-
-
         }
 
         for (View otherBubble : bubbles) {

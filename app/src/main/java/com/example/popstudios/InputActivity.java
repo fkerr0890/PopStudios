@@ -101,7 +101,6 @@ public class InputActivity extends AppCompatActivity {
                 }
             });
         }
-
     }
 
     public void startMainActivity(View view) {
@@ -154,5 +153,4 @@ public class InputActivity extends AppCompatActivity {
         db.update(FeedReaderContract.FeedEntry.TABLE_NAME, newValues,
                 FeedReaderContract.FeedEntry._ID + " = " + goalID,null);
     }
-
 }
