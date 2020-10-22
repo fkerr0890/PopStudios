@@ -23,14 +23,14 @@ import static com.example.popstudios.MainActivity.dbHelper;
 
 public class BubbleFragment extends Fragment {
     public static List<Long> addedGoals;
-    private float width;
-    private float height;
+    private float width, height, currentScale;
     private ViewGroup layout;
     private View fragment;
     private List<View> bubbles;
 
     View.OnLongClickListener listener = new View.OnLongClickListener() {
-        // Gets ID and View from button that user LongClicks on and opens a Dialog window allowing user to choose whether to delete or not
+        // Gets ID and View from button that user LongClicks on and opens a Dialog window allowing
+        // user to choose whether to delete or not
         @Override
         public boolean onLongClick(View v) {
             int buttonId = v.getId();
@@ -53,6 +53,7 @@ public class BubbleFragment extends Fragment {
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        currentScale = 1;
         addedGoals = new ArrayList<>();
         bubbles = new ArrayList<>();
         fragment = inflater.inflate(R.layout.fragment_bubble,container,false);
@@ -71,7 +72,7 @@ public class BubbleFragment extends Fragment {
                         view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         width = view.getWidth();
                         height = view.getHeight();
-/*                        scaleBubbles();*/
+                        scaleBubbles();
                         if (addedBubble != null)
                             layoutBubble(addedBubble);
                         else {
@@ -102,13 +103,13 @@ public class BubbleFragment extends Fragment {
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.width = goal.calculateRadius() * 2;
-        params.height = goal.calculateRadius() * 2;
+        params.width = (int) (goal.calculateRadius() * 2 * currentScale);
+        params.height = (int) (goal.calculateRadius() * 2 * currentScale);
         bubble.setLayoutParams(params);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) bubble
                 .setBackgroundTintList(ColorStateList.valueOf(goal.calculateColor()));
         bubble.setId((int) goal.getGoalID());
-        /*        bubble.setElevation(1f/goal.calculateRadius()*10f);*/
+//        bubble.setElevation(1f/goal.calculateRadius()*10f);
         bubble.setContentDescription("Goal name: " + goal.getName());
         bubble.setOnLongClickListener(listener);
         layout.addView(bubble);
@@ -132,7 +133,9 @@ public class BubbleFragment extends Fragment {
         for (View otherBubble : bubbles) {
             Rect bubble2Rect = new Rect();
             otherBubble.getHitRect(bubble2Rect);
-            if (bubble != otherBubble && MainActivity.circlesIntersect(bubble1Rect.centerX(),bubble1Rect.centerY(),bubble2Rect.centerX(),bubble2Rect.centerY(),bubble1Rect.width()/2f,bubble2Rect.width()/2f,6)) {
+            if (bubble != otherBubble && MainActivity.circlesIntersect(bubble1Rect.centerX(),
+                    bubble1Rect.centerY(), bubble2Rect.centerX(), bubble2Rect.centerY(),
+                    bubble1Rect.width()/2f,bubble2Rect.width()/2f,6)) {
                 if (bubble.getX() + (float) bubble.getWidth()/2 < otherBubble.getX() +
                         (float) otherBubble.getWidth()/2)
                     bubble.setX(otherBubble.getX() - bubble.getWidth() * (float) 1.1);
@@ -156,21 +159,14 @@ public class BubbleFragment extends Fragment {
         for (View otherBubble : bubbles) {
             Rect bubble2Rect = new Rect();
             otherBubble.getHitRect(bubble2Rect);
-            if (bubble != otherBubble && MainActivity.circlesIntersect(bubble1Rect.centerX(),bubble1Rect.centerY(),bubble2Rect.centerX(),bubble2Rect.centerY(),bubble1Rect.width()/2f,bubble2Rect.width()/2f,6))
+            if (bubble != otherBubble && MainActivity.circlesIntersect(bubble1Rect.centerX(),
+                    bubble1Rect.centerY(), bubble2Rect.centerX(), bubble2Rect.centerY(),
+                    bubble1Rect.width()/2f,bubble2Rect.width()/2f,6))
                 return false;
         }
-
         return true;
     }
 
-    /*    private boolean isViewOverlapping(View firstBubble, View secondBubble) {
-            // Be sure to always place calls to this method inside a Runnable statement (layout.post())
-            float firstRadius = (float) firstBubble.getWidth()/2,
-                    secondRadius = (float) secondBubble.getWidth()/2;
-            return Math.hypot(firstBubble.getX() + firstRadius - (secondBubble.getX() + secondRadius),
-                    firstBubble.getY() + firstRadius - (secondBubble.getY() + secondRadius)) <
-                    firstRadius + secondRadius;
-        }*/
     private void scaleBubbles() {
         for (View bubble : bubbles) {
             float scale = getScale();
@@ -187,7 +183,26 @@ public class BubbleFragment extends Fragment {
     }
 
     private float getScale() {
-        return (float) 0.7;
+        float maxOverScale = 1;
+        for (View bubble : bubbles) {
+            if (bubble.getX() < 0) {
+                float overScale = 1 - bubble.getX()/width;
+                if (overScale > maxOverScale) maxOverScale = overScale;
+            }
+            else if (bubble.getRight() > width) {
+                float overScale = bubble.getRight()/width;
+                if (overScale > maxOverScale) maxOverScale = overScale;
+            }
+            else if (bubble.getY() < 0) {
+                float overScale = 1 - bubble.getY()/height;
+                if (overScale > maxOverScale) maxOverScale = overScale;
+            }
+            else if (bubble.getBottom() > height) {
+                float overScale = bubble.getBottom()/height;
+                if (overScale > maxOverScale) maxOverScale = overScale;
+            }
+        }
+        return currentScale * 1/maxOverScale;
     }
 
     public float getWidth() {
