@@ -9,6 +9,7 @@ This app is all about completing your goals. Our vision was to create an app tha
 ## How to Run the App
 
 ## GoalPop Structure:
+See GoalPop Class Structure.png
 
 ## Possible Bugs:
 
@@ -37,4 +38,12 @@ We had many ideas for GoalPop, however with the compressed time period we unfort
 * Betsy Foy
 * Charlie Thole
 
-## Awknowledgement:
+## Acknowledgement / Sources:
+Bubble Color-Blind Friendly Swatch: https://coolors.co/7400b8-6930c3-5e60ce-5390d9-4ea8de-48bfe3-56cfe1-64dfdf-72efdd-80ffdb
+
+SQLite Coding Info: https://developer.android.com/training/data-storage/sqlite#java
+List Tab RecyclerView Coding Info: https://developer.android.com/guide/topics/ui/layout/recyclerview
+Linear Layout Coding Info: https://abhiandroid.com/ui/linear-layout
+
+
+#### We'd like to give a special thanks to Lauren Milne, preceptors, and our Software Development classmates who gave us feedback and support.
