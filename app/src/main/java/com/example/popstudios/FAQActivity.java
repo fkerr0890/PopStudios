@@ -1,3 +1,5 @@
+// FAQActivity.java opens a new page when the user clicks on the ? icon in the top left corner
+
 package com.example.popstudios;
 
 import androidx.appcompat.app.AppCompatActivity;

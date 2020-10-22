@@ -1,3 +1,6 @@
+// Main Activity is where all the user's goals appear as bubbles. It is the main page of our app
+// and holds methods for adding bubbles to a list, deleting/completing a goal, placing bubbles,
+// bubble animations, and can open input, edit, FAQ pages, and the list view of bubbles
 package com.example.popstudios;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +25,16 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.popstudios.BubbleFragment;
+import com.example.popstudios.DeleteButtonDialog;
+import com.example.popstudios.FAQActivity;
+import com.example.popstudios.FeedReaderContract;
+import com.example.popstudios.FeedReaderDbHelper;
+import com.example.popstudios.Goal;
+import com.example.popstudios.GoalListFragment;
+import com.example.popstudios.InputActivity;
+import com.example.popstudios.MyPagerAdapter;
+import com.example.popstudios.R;
 import com.example.popstudios.databinding.ActivityMainBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.skydoves.balloon.ArrowOrientation;
@@ -42,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     private int shortAnimationDuration;
     private List<Integer> listOfExpandedBubbles;
     public static float screenWidth;
-    public static Map<Long,Goal> goalById;
+    public static Map<Long, Goal> goalById;
     int deleteButtonId;
     View deleteView;
     private BubbleFragment bubbleFragment;
@@ -162,9 +175,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
         dbHelper = new FeedReaderDbHelper(this);
         goalById = new HashMap<>();
-
-
-
     }
 
     private Balloon createBalloon() {
@@ -186,13 +196,13 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
     //Brings user to Create Goal Page
     public void startInputActivity(View view) {
-        Intent inputActivityIntent = new Intent(this,InputActivity.class);
+        Intent inputActivityIntent = new Intent(this, InputActivity.class);
         startActivity(inputActivityIntent);
     }
 
     //Brings user to FAQ Page
     public void startHelp(View view){
-        Intent helpActivityIntent = new Intent(this,FAQActivity.class);
+        Intent helpActivityIntent = new Intent(this, FAQActivity.class);
         startActivity(helpActivityIntent);
     }
 
@@ -361,7 +371,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                     if (listOfExpandedBubbles.contains(bubble.getId()))
                         addBalloon(bubble);
                 }
-
             }
 
             @Override
@@ -408,6 +417,4 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         adapter.addFragment(new GoalListFragment());
         viewPager.setAdapter(adapter);
     }
-
-
 }

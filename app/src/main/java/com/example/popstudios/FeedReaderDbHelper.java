@@ -1,3 +1,5 @@
+// This class gets information from the SQLite Database created in FeedReaderContract
+
 package com.example.popstudios;
 
 import android.content.Context;

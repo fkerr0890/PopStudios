@@ -1,3 +1,5 @@
+// FeedReaderContract defines the SQLite table used to store information about our Goal objects
+
 package com.example.popstudios;
 
 import android.provider.BaseColumns;
