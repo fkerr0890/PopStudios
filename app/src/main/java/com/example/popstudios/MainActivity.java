@@ -217,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         inputEditActivityIntent.putExtra("GOAL_DESCRIPTION", goalDescription);
 
         startActivity(inputEditActivityIntent);
-
     }
 
     public void showInfo(View view) {
