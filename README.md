@@ -4,7 +4,7 @@
 Babes Having Fun Coding
 
 ## Overview
-This app is all about completing your goals. Our vision was to create an app that allows users to track their goals and manage them in a fun and fresh way! In our app users can define their own goals, rank their importance and difficulty, and keep them all in one place, as bubbles on a screen. When a user completes a goal, our app keeps track of that. This will hopefully provide an extra sense of motivation to the user as they can see what they've accomplished using our app.
+This app is all about completing your goals. Our vision was to create an app that allows users to track their goals and manage them in a fun and fresh way! In our app users can define their own goals, rank their importance and difficulty, and keep them all in one place, as bubbles on a screen. When a user completes a goal, it will "pop" and our app updates it in the list view to show it's completed. This will hopefully provide an extra sense of motivation to the user as they can see what they've accomplished using our app.
 
 We built this app for COMP 225 Software Design and Development. Through this project we learned about the layered process of building an app, responsibility in a group project, and collaboration through remote learning. We honed our coding skills in Java/XML and our ability to build something from scratch. Our app is free and can be used on Android phones (or run through an emulator).
 
