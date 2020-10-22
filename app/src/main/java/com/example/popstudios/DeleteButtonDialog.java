@@ -1,5 +1,6 @@
 // Class called when user long clicks on a bubble. Generates a Dialog that allows users to either
 // complete, delete, or cancel
+// Watched Coding in Flow Youtube videos for help
 
 package com.example.popstudios;
 
