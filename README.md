@@ -6,6 +6,8 @@ Babes Having Fun Coding
 ## Overview
 This app is all about completing your goals. Our vision was to create an app that allows users to track their goals and manage them in a fun and fresh way!
 
+We built this app for COMP 225 Software Design and Development. Through this project we learned about the layered process of building an app, responsibility in a group project, and collaboration through remote learning. We honed our coding skills in Java/XML and our ability to build something from scratch. Our app is free and can be used on Android phones (or run through an emulator).
+
 ## How to Run the App
 
 ## GoalPop Structure:
@@ -41,14 +43,13 @@ We had many ideas for GoalPop, however with the compressed time period we unfort
 * Betsy Foy
 * Charlie Thole
 
-## Awknowledgement / Sources:
-
 ## Acknowledgement / Sources:
 Bubble Color-Blind Friendly Swatch: https://coolors.co/7400b8-6930c3-5e60ce-5390d9-4ea8de-48bfe3-56cfe1-64dfdf-72efdd-80ffdb
 
 SQLite Coding Info: https://developer.android.com/training/data-storage/sqlite#java
 List Tab RecyclerView Coding Info: https://developer.android.com/guide/topics/ui/layout/recyclerview
 Linear Layout Coding Info: https://abhiandroid.com/ui/linear-layout
-
+Research on Dialogs:
+https://www.youtube.com/results?search_query=coding+flow
 
 #### We'd like to give a special thanks to Lauren Milne, preceptors, and our Software Development classmates who gave us feedback and support.
