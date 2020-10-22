@@ -184,17 +184,19 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 .build();
     }
 
+    //Brings user to Create Goal Page
     public void startInputActivity(View view) {
         Intent inputActivityIntent = new Intent(this,InputActivity.class);
         startActivity(inputActivityIntent);
     }
 
+    //Brings user to FAQ Page
     public void startHelp(View view){
         Intent helpActivityIntent = new Intent(this,FAQActivity.class);
         startActivity(helpActivityIntent);
     }
 
-
+    //Brings user and transfers goal info to Edit Goal Page
     public void startEditInputActivity(View view){
         Intent inputEditActivityIntent = new Intent(this,InputActivity.class);
 

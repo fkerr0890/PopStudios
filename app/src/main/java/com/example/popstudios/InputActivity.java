@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+//Creates either the Input Goal or Edit Goal Page
 public class InputActivity extends AppCompatActivity {
     SeekBar importanceBar, difficultyBar;
     EditText editGoal, editDescription;
@@ -46,6 +46,7 @@ public class InputActivity extends AppCompatActivity {
 
         dbHelper = new FeedReaderDbHelper(this);
 
+        //Sets Goal Edit screen with goal info and updates when saved
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("GOAL_ID")){
             final long goalID = intent.getLongExtra("GOAL_ID",0);
@@ -104,6 +105,7 @@ public class InputActivity extends AppCompatActivity {
 
     }
 
+    //Returns to Visual Tab after successful goal creation or edit
     public void startMainActivity(View view) {
         if (writeSql()) {
 /*            Intent mainActivityIntent = new Intent(this, MainActivity.class);
@@ -112,7 +114,7 @@ public class InputActivity extends AppCompatActivity {
         }
     }
 
-
+    //Saves user input as a row in the SQLite table
     private boolean writeSql() {
         goalName = editGoal.getText().toString();
         goalImportanceNum = importanceBar.getProgress();
@@ -137,6 +139,7 @@ public class InputActivity extends AppCompatActivity {
         return true;
     }
 
+    //Updates specific row in SQLite table with new user input
     public void updateGoal(Long goalID){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
