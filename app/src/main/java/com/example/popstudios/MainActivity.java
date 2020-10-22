@@ -1,6 +1,8 @@
 // Main Activity is where all the user's goals appear as bubbles. It is the main page of our app
 // and holds methods for adding bubbles to a list, deleting/completing a goal, placing bubbles,
-// bubble animations, and can open input, edit, FAQ pages, and the list view of bubbles
+// bubble animations, and can open input, edit, FAQ pages, and the list view of bubbles. We would
+// have liked to refactor this if we had more time
+
 package com.example.popstudios;
 
 import androidx.appcompat.app.AppCompatActivity;
