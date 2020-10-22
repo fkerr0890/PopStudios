@@ -4,12 +4,12 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/baseline_bubble_chart_black_36"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/baseline_bubble_chart_black_36"
         android:supportsRtl="true"
+
         android:theme="@style/AppTheme">
-        <activity android:name=".GoalListFragment"></activity>
         <activity android:name=".FAQActivity" />
         <activity android:name=".InputActivity" />
         <activity android:name=".MainActivity">
