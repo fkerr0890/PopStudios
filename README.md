@@ -30,6 +30,9 @@ We had many ideas for GoalPop, however with the compressed time period we unfort
 * Personalization
     * Users could pick their color swatch for the bubbles for increased personalization.
     * Users could move the bubbles around the screen to help them visualize their goals more efficiently.
+* Refactoring
+   * With more time, we would refactor the Main Activity--creating an animation class and bubble manager class.
+
 
 
 ## Authors
