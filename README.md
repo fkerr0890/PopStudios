@@ -49,11 +49,15 @@ We had many ideas for GoalPop, however with the compressed time period we unfort
 Bubble Color-Blind Friendly Swatch: https://coolors.co/7400b8-6930c3-5e60ce-5390d9-4ea8de-48bfe3-56cfe1-64dfdf-72efdd-80ffdb
 
 SQLite Coding Info: https://developer.android.com/training/data-storage/sqlite#java
+
 List Tab RecyclerView Coding Info: https://developer.android.com/guide/topics/ui/layout/recyclerview
+
 Linear Layout Coding Info: https://abhiandroid.com/ui/linear-layout
-Research on Dialogs:
-https://www.youtube.com/results?search_query=coding+flow
+
+Research on Dialogs: https://www.youtube.com/results?search_query=coding+flow
+
 Tabs with fragments: Thanks to Coding With Mitch - https://www.youtube.com/watch?v=bNpWGI_hGGg&ab_channel=CodingWithMitch
+
 Many thanks to Skydoves (Jaewoong Eum) for their balloon library for Android - https://github.com/skydoves/Balloon
 
 #### We'd like to give a special thanks to Lauren Milne, preceptors, and our Software Development classmates who gave us feedback and support.
