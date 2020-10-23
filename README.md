@@ -14,6 +14,7 @@ We built this app for COMP 225 Software Design and Development. Through this pro
 See GoalPop Class Structure.png
 
 ## Possible Bugs:
+There have been issues with the list view not matching the bubble view but these usually resolve themselves upon restarting the app.
 
 ## Future Work:
 We had many ideas for GoalPop, however with the compressed time period we unfortunately could not get to everything. Future work on GoalPop could include:
@@ -51,5 +52,7 @@ List Tab RecyclerView Coding Info: https://developer.android.com/guide/topics/ui
 Linear Layout Coding Info: https://abhiandroid.com/ui/linear-layout
 Research on Dialogs:
 https://www.youtube.com/results?search_query=coding+flow
+Tabs with fragments: Thanks to Coding With Mitch - https://www.youtube.com/watch?v=bNpWGI_hGGg&ab_channel=CodingWithMitch
+Many thanks to Skydoves (Jaewoong Eum) for their balloon library for Android - https://github.com/skydoves/Balloon
 
 #### We'd like to give a special thanks to Lauren Milne, preceptors, and our Software Development classmates who gave us feedback and support.
