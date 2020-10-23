@@ -9,7 +9,7 @@ This app is all about completing your goals. Our vision was to create an app tha
 We built this app for COMP 225 Software Design and Development. Through this project we learned about the layered process of building an app, responsibility in a group project, and collaboration through remote learning. We honed our coding skills in Java/XML and our ability to build something from scratch. Our app is free and can be used on Android phones (or run through an emulator).
 
 ## How to Run the App
-Follow this link and download the apk file to your Android device: https://drive.google.com/file/d/1tLhqQkTTw6GQWwmjhHYjE7vQeZ95koec/view?usp=sharing
+Follow this link and download the apk file to your Android device: https://drive.google.com/file/d/1hcdd0RWub3hCSrU62p0996mHrxEudIrW/view?usp=sharing
 
 ## GoalPop Structure:
 See GoalPop Class Structure.png
