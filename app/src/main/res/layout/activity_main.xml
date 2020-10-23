@@ -57,6 +57,22 @@
         android:focusable="true"
         android:onClick="startHelp"/>
 
+    <ImageButton
+        android:id="@+id/deleteBttn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginTop="4dp"
+        android:contentDescription="@string/delete_bttn_content_desc"
+        app:layout_constraintTop_toBottomOf="@id/divider4"
+        android:tint="@color/colorAccent"
+        android:backgroundTint="@android:color/transparent"
+        app:layout_constraintEnd_toStartOf="@id/divider2"
+        app:srcCompat="@mipmap/baseline_delete_outline_white_36"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="deleteAllGoals"/>
+
     <TextView
         android:id="@+id/appName"
         android:layout_width="wrap_content"

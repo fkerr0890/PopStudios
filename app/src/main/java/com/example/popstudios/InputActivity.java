@@ -17,7 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-//Creates either the Input Goal or Edit Goal Page
+
+/** An activity that handles goal input and goal editing
+ */
 public class InputActivity extends AppCompatActivity {
     SeekBar importanceBar, difficultyBar;
     EditText editGoal, editDescription;
@@ -65,9 +67,12 @@ public class InputActivity extends AppCompatActivity {
 
                 @Override
                 public void onClick(View v) {
-                    updateGoal(goalID);
-                    Intent mainActivityIntent = new Intent(InputActivity.this, MainActivity.class);
-                    startActivity(mainActivityIntent);
+                    MainActivity.editedGoal = updateGoal(goalID);
+                    MainActivity.editedGoalId = goalID;
+
+/*                    Intent mainActivityIntent = new Intent(InputActivity.this, MainActivity.class);
+                    startActivity(mainActivityIntent);*/
+                    finish();
                 }
             });
         }
@@ -104,22 +109,26 @@ public class InputActivity extends AppCompatActivity {
         }
     }
 
-    //Returns to Visual Tab after successful goal creation or edit
+    /**
+     * Returns to the MainActivity after successful goal creation or edit
+     */
     public void startMainActivity(View view) {
         if (writeSql()) {
-/*            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            startActivity(mainActivityIntent);*/
             finish();
         }
     }
 
-    //Saves user input as a row in the SQLite table
+    /**
+     * Saves user input as a row in the SQLite table
+     * @return False if a goal name was not provided
+     */
     private boolean writeSql() {
         goalName = editGoal.getText().toString();
         goalImportanceNum = importanceBar.getProgress();
         goalDifficultyNum = difficultyBar.getProgress();
         goalDescriptionStr = editDescription.getText().toString();
         goalCompleteStatus = 0;
+
 
         if (goalName.isEmpty()){
             Toast.makeText(InputActivity.this, "Please name your goal",Toast.LENGTH_SHORT).show();
@@ -138,14 +147,20 @@ public class InputActivity extends AppCompatActivity {
         return true;
     }
 
-    //Updates specific row in SQLite table with new user input
-    public void updateGoal(Long goalID){
+    /**
+     * Updates specific row in SQLite table with new user input
+     * @param goalID - the id of the goal to be updated
+     * @return - the updated goal
+     */
+    public Goal updateGoal(Long goalID){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         goalName = editGoal.getText().toString();
         goalImportanceNum = importanceBar.getProgress();
         goalDifficultyNum = difficultyBar.getProgress();
         goalDescriptionStr = editDescription.getText().toString();
+
+        Goal newGoal = new Goal(goalID,goalName,goalImportanceNum,goalDifficultyNum,goalDescriptionStr,goalCompleteStatus);
 
         ContentValues newValues = new ContentValues();
         newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_GOAL_NAME, goalName);
@@ -155,5 +170,6 @@ public class InputActivity extends AppCompatActivity {
         newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalCompleteStatus);
         db.update(FeedReaderContract.FeedEntry.TABLE_NAME, newValues,
                 FeedReaderContract.FeedEntry._ID + " = " + goalID,null);
+        return newGoal;
     }
 }

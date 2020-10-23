@@ -9,10 +9,15 @@
         android:roundIcon="@mipmap/baseline_bubble_chart_black_36"
         android:supportsRtl="true"
 
+
         android:theme="@style/AppTheme">
-        <activity android:name=".FAQActivity" />
-        <activity android:name=".InputActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".FAQActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".InputActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -8,6 +8,9 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter for MainActivity's viewPager. It adds and retrieves fragments
+ */
 public class MyPagerAdapter extends FragmentPagerAdapter {
     private final List<Fragment> fragmentList = new ArrayList<>();
     public MyPagerAdapter(@NonNull FragmentManager fm, int behavior) {

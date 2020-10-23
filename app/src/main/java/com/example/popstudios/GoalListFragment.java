@@ -2,7 +2,6 @@ package com.example.popstudios;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,37 +10,21 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * A fragment containing the list of goals
+ */
 public class GoalListFragment extends Fragment {
 
-    /*    FeedReaderDbHelper dbHelper;
-        TextView incompleteGoalsList;
-        TextView completeGoalsList;
-        String incompleteGoals;*/
     private String[] s1, s2, s3, s4;
     private RecyclerView recyclerView;
     static List<Long> addedGoals;
     static List<Long> completedGoals;
-/*
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.recycler_view);
-        recyclerView = findViewById(R.id.recyclerView);
-
-        dbHelper = new FeedReaderDbHelper(this);
-        setUpGoalList(dbHelper);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        MyAdapter myAdapter = new MyAdapter(this,s1,s2,s3,s4);
-        recyclerView.setAdapter(myAdapter);
-    }*/
 
     @Nullable
     @Override
@@ -55,12 +38,32 @@ public class GoalListFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Deletes all goals from the list
+     */
+    public void resetList() {
+        addedGoals.clear();
+        completedGoals.clear();
+        s1 = null;
+        s2 = null;
+        s3 = null;
+        s4 = null;
+        refresh();
+    }
+
+    /**
+     * Refresh the list in case a goal was added
+     */
     private void refresh() {
-        setUpGoalList(MainActivity.dbHelper);
+        setUpGoalList(((MainActivity) Objects.requireNonNull(getActivity())).getDbHelper());
         MyAdapter myAdapter = new MyAdapter(getContext(),s1,s2,s3,s4);
         recyclerView.setAdapter(myAdapter);
     }
 
+    /**
+     * Adds goal information to string arrays that are used by the RecyclerView. Completed goals are added at the end of the list
+     * @param dbHelper - current FeedReaderDbHelper
+     */
     public void setUpGoalList(FeedReaderDbHelper dbHelper) {
         List<Goal> goalList = dbHelper.getGoalsFromDb();
         int num = 0;
@@ -69,25 +72,45 @@ public class GoalListFragment extends Fragment {
         s2 = new String[listSize];
         s3 = new String[listSize];
         s4 = new String[listSize];
+        for (Long id : completedGoals)
+            addedGoals.remove(id);
         Iterator<Long> addedGoalsIterator = addedGoals.iterator();
+
         for (Goal goal : goalList) {
-            if (goal.getGoalStatus() == 0) {
-                if (!addedGoals.contains(goal.getGoalID())) {
+            if (!addedGoals.contains(goal.getGoalID())) {
+                if (goal.getGoalStatus() == 0) {
                     setStrings(goal, num, false);
                     addedGoals.add(goal.getGoalID());
-                } else
-                    setStrings(MainActivity.goalById.get(addedGoalsIterator.next()), num, false);
+                    num++;
+                }
+                else if (!completedGoals.contains(goal.getGoalID())) {
+                    completedGoals.add(goal.getGoalID());
+                }
+            }
+            else {
+                long id = addedGoalsIterator.next();
+                Goal nextGoal = MainActivity.goalById.get(id);
+                if (nextGoal == null) {
+                    MainActivity.goalById.put(id, goal);
+                    setStrings(goal, num, false);
+                }
+                else
+                    setStrings(nextGoal,num,false);
                 num++;
             }
-            else if (!completedGoals.contains(goal.getGoalID()))
-                completedGoals.add(goal.getGoalID());
         }
         for (Long goalId : completedGoals) {
-            setStrings(MainActivity.goalById.get(goalId), num, true);
+            setStrings(Objects.requireNonNull(MainActivity.goalById.get(goalId)), num, true);
             num++;
         }
     }
 
+    /**
+     * Sets RecyclerView string arrays with goal info
+     * @param goal The new goal
+     * @param num The array index
+     * @param completed True if the goal has been completed
+     */
     private void setStrings(Goal goal, int num, boolean completed) {
         s1[num] = goal.name;
         if (completed)

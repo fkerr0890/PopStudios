@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+/**
+ * An activity displaying FAQ information
+ */
 public class FAQActivity extends AppCompatActivity {
 
     //Sets up FAQ page

@@ -4,6 +4,9 @@ package com.example.popstudios;
 
 import android.provider.BaseColumns;
 
+/**
+ * A class that contains FeedEntry, which defines column name string constants
+ */
 public final class FeedReaderContract {
 
     // Sets up column names for SQLite table

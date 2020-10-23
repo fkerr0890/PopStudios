@@ -16,9 +16,12 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -27,16 +30,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.popstudios.BubbleFragment;
-import com.example.popstudios.DeleteButtonDialog;
-import com.example.popstudios.FAQActivity;
-import com.example.popstudios.FeedReaderContract;
-import com.example.popstudios.FeedReaderDbHelper;
-import com.example.popstudios.Goal;
-import com.example.popstudios.GoalListFragment;
-import com.example.popstudios.InputActivity;
-import com.example.popstudios.MyPagerAdapter;
-import com.example.popstudios.R;
 import com.example.popstudios.databinding.ActivityMainBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.skydoves.balloon.ArrowOrientation;
@@ -49,10 +42,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * The main activity of this app that contains the bubble and goalList fragments and handles bubble animation
+ */
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener, DeleteButtonDialog.DeleteButtonDialogListener {
-    //    private static final String TAG = "MyActivity";
     ActivityMainBinding main;
-    public static FeedReaderDbHelper dbHelper;
+    private FeedReaderDbHelper dbHelper;
     private Animator currentAnimator;
     private int shortAnimationDuration;
     private List<Integer> listOfExpandedBubbles;
@@ -61,30 +56,39 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     int deleteButtonId;
     View deleteView;
     private BubbleFragment bubbleFragment;
+    private GoalListFragment goalListFragment;
     private static int moveCount;
     boolean itHitTheWall;
+    private Balloon currentBalloon;
+    public static Goal editedGoal;
+    public static long editedGoalId = -1;
 
     // Creates a new listener for when user long clicks
-    View.OnLongClickListener listener = new View.OnLongClickListener() {
-        // Gets ID and View from button that user LongClicks on and opens a Dialog window allowing user
-        // to choose whether to delete or not
-        @Override
-        public boolean onLongClick(View v) {
-            int buttonId = v.getId();
 
-            // set info of button to be deleted (view and ID)
-            setDeleteButtonId(buttonId);
-            setDeleteView(v);
-            openDialog();
-            return true;
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (editedGoalId != -1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                goalById.replace(editedGoalId,editedGoal);
+            }
+            for (Integer id : listOfExpandedBubbles) {
+                listOfExpandedBubbles.remove(id);
+                animate(findViewById(id), 1f, false);
+            }
+            for (View bubble : bubbleFragment.getBubbles()) {
+                if (bubble.getId() == editedGoalId) {
+                    ViewGroup.LayoutParams params = bubble.getLayoutParams();
+                    params.width = (int) (editedGoal.calculateRadius() * 2 * bubbleFragment.getCurrentScale());
+                    params.height = (int) (editedGoal.calculateRadius() * 2 * bubbleFragment.getCurrentScale());
+                    bubble.setLayoutParams(params);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) bubble
+                            .setBackgroundTintList(ColorStateList.valueOf(editedGoal.calculateColor()));
+                }
 
-        // creates a new instance of the dialog class
-        public void openDialog() {
-            DeleteButtonDialog dialog = new DeleteButtonDialog();
-            dialog.show(getSupportFragmentManager(), "example dialog");
+            }
         }
-    };
+    }
 
 
     // setters and getters for deleting button View and ID
@@ -100,6 +104,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     }
     public View getDeleteView() {
         return deleteView;
+    }
+
+    public FeedReaderDbHelper getDbHelper() {
+        return dbHelper;
     }
 
     // Called when the user clicks "delete"
@@ -118,9 +126,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, null);
         GoalListFragment.addedGoals.remove((long)deleteButtonId);
         BubbleFragment.addedGoals.remove((long)deleteButtonId);
+        bubbleFragment.checkForScaleUp(deleteButtonId);
         // visually delete button by removing it from ViewGroup
-        // ViewGroup parentView = (ViewGroup) deleteButtonView.getParent();
-        // parentView.removeView(deleteButtonView);
     }
 
     // Called when the user clicks "completed" in dialog
@@ -135,21 +142,23 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 //        assert goal != null;
 //        goal.setGoalStatus(1);
         // shrink the button
-        animate(deleteButtonView,0f, true);
+        if (goal != null) {
+            animate(deleteButtonView, 0f, true);
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // New value for completed Status
-        int goalStatus = 1;
+            // New value for completed Status
+            int goalStatus = 1;
 
-        System.out.println(goal.getGoalStatus());
-        ContentValues newValues = new ContentValues();
-        newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalStatus);
-        db.update(FeedReaderContract.FeedEntry.TABLE_NAME, newValues,
-                FeedReaderContract.FeedEntry._ID + " = " + goal.getGoalID(),null);
-        goal.setGoalStatus(1);
-        GoalListFragment.completedGoals.add((long) deleteButtonId);
-        System.out.println(goal.getGoalStatus());
+            ContentValues newValues = new ContentValues();
+            newValues.put(FeedReaderContract.FeedEntry.COLUMN_NAME_STATUS, goalStatus);
+            db.update(FeedReaderContract.FeedEntry.TABLE_NAME, newValues,
+                    FeedReaderContract.FeedEntry._ID + " = " + goal.getGoalID(), null);
+            goal.setGoalStatus(1);
+            GoalListFragment.completedGoals.add((long) deleteButtonId);
+            bubbleFragment.checkForScaleUp(deleteButtonId);
+            System.out.println(goal.getGoalStatus());
+        }
     }
 
     @Override
@@ -164,21 +173,54 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
         itHitTheWall = false;
 
+        setupListener();
         ViewPager viewPager = findViewById(R.id.pager);
         setupViewPager(viewPager);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
         TabLayout.Tab tab1 = tabLayout.getTabAt(0);
-        tab1.setText(R.string.tab1_text);
-        tab1.setIcon(R.mipmap.baseline_bubble_chart_white_36);
         TabLayout.Tab tab2 = tabLayout.getTabAt(1);
-        tab2.setText(R.string.tab2_text);
-        tab2.setIcon(R.mipmap.baseline_list_white_36);
+        if (tab1 != null && tab2 != null) {
+            tab1.setText(R.string.tab1_text);
+            tab1.setIcon(R.mipmap.baseline_bubble_chart_white_36);
 
+            tab2.setText(R.string.tab2_text);
+            tab2.setIcon(R.mipmap.baseline_list_white_36);
+        }
         dbHelper = new FeedReaderDbHelper(this);
         goalById = new HashMap<>();
     }
 
+    /**
+     * Sets up the long click listener that, when triggered, shows the complete/delete goal dialog
+     */
+    private void setupListener() {
+        new View.OnLongClickListener() {
+            // Gets ID and View from button that user LongClicks on and opens a Dialog window allowing user
+            // to choose whether to delete or not
+            @Override
+            public boolean onLongClick(View v) {
+                int buttonId = v.getId();
+
+                // set info of button to be deleted (view and ID)
+                setDeleteButtonId(buttonId);
+                setDeleteView(v);
+                openDialog();
+                return true;
+            }
+
+            // creates a new instance of the dialog class
+            public void openDialog() {
+                DeleteButtonDialog dialog = new DeleteButtonDialog();
+                dialog.show(getSupportFragmentManager(), "example dialog");
+            }
+        };
+    }
+
+    /**
+     * Creates a new balloon
+     * @return a new balloon
+     */
     private Balloon createBalloon() {
         return new Balloon.Builder(this)
                 .setLayout(R.layout.balloon_layout)
@@ -196,20 +238,32 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 .build();
     }
 
-    //Brings user to Create Goal Page
+    /**
+     * Starts a new InputActivity via intent
+     * @param view The add button
+     */
     public void startInputActivity(View view) {
         Intent inputActivityIntent = new Intent(this, InputActivity.class);
         startActivity(inputActivityIntent);
     }
 
-    //Brings user to FAQ Page
+    /**
+     * Starts a new FAQActivity via intent
+     * @param view The help button
+     */
     public void startHelp(View view){
         Intent helpActivityIntent = new Intent(this, FAQActivity.class);
         startActivity(helpActivityIntent);
     }
 
-    //Brings user and transfers goal info to Edit Goal Page
+    /**
+     * Starts a new InputActivity for editing a gaol via intent with extras containing the goal's existing information
+     * @param view The edit button
+     */
     public void startEditInputActivity(View view){
+        if (currentBalloon != null)
+            currentBalloon.dismiss();
+
         Intent inputEditActivityIntent = new Intent(this,InputActivity.class);
 
         Goal goal = goalById.get((long)view.getId());
@@ -231,12 +285,18 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         startActivity(inputEditActivityIntent);
     }
 
+    /**
+     * Shows a goal's info
+     * @param view The info button
+     */
     public void showInfo(View view) {
         Goal goal = goalById.get((long)view.getId());
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(goal.getDescription()).setTitle(goal.name);
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        if (goal != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(goal.getDescription()).setTitle(goal.name);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
     }
 
     @Override
@@ -244,19 +304,26 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         return false;
     }
 
+    /**
+     * After collapsing any expanded bubbles, this calls animate() with a scale of 1f if the bubble is already expanded.
+     * If it isn't expanded, an appropriate final scale for the bubble is calculated based on the bubble's size and animate() is called
+     * with that scale.
+     * @param view The bubble the user clicked
+     */
     public void animateBubble(View view) {
         if (currentAnimator != null)
             currentAnimator.cancel();
         moveCount = 0;
-        if (listOfExpandedBubbles.size() != 0) {
-            for (Integer id : listOfExpandedBubbles) {
-                View expandedBubble = findViewById(id);
-                if (expandedBubble != view) {
-                    listOfExpandedBubbles.remove(id);
-                    animate(findViewById(id), 1f, false);
-                }
+
+        for (Integer id : listOfExpandedBubbles) {
+            View expandedBubble = findViewById(id);
+            if (expandedBubble != view) {
+                listOfExpandedBubbles.remove(id);
+                currentBalloon.dismiss();
+                animate(findViewById(id), 1f, false);
             }
         }
+
         // Set the pivot point for SCALE_X and SCALE_Y transformations
         // to the top-left corner of the zoomed-in view (the default
         // is the center of the view).
@@ -264,6 +331,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         view.setPivotY(0f);*/
         float scale;
         if (listOfExpandedBubbles.contains(view.getId())) {
+            currentBalloon.dismiss();
             scale = 1f;
             listOfExpandedBubbles.remove((Integer) view.getId());
         }
@@ -274,6 +342,10 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         animate(view,scale, false);
     }
 
+    /**
+     * Attaches a balloon to the expanded bubble. The balloon displays the goal name, edit and info buttons
+     * @param view The bubble on which to attach the balloon
+     */
     private void addBalloon(View view) {
         Balloon bubbleInfo = createBalloon();
         ImageButton editButton = bubbleInfo.getContentView().findViewById(R.id.editButton);
@@ -287,8 +359,14 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         Rect rect = new Rect();
         view.getHitRect(rect);
         bubbleInfo.showAlignTop(view, 160,30);
+        currentBalloon = bubbleInfo;
     }
 
+    /**
+     * Returns a list of bubbles that overlap with bubble1
+     * @param bubble1 The bubble in question
+     * @return A list of intersecting bubbles
+     */
     private List<View> findIntersectingBubbles(View bubble1) {
         Rect bubble1Rect = new Rect();
         bubble1.getHitRect(bubble1Rect);
@@ -302,6 +380,17 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         return result;
     }
 
+    /**
+     * Determines if one circle overlaps another
+     * @param x1 The center x of circle 1
+     * @param y1 The center y of circle 1
+     * @param x2 The center x of circle 2
+     * @param y2 The center y of circle 2
+     * @param r1 The radius of circle 1
+     * @param r2 The radius of circle 2
+     * @param amountOverlap 1/amountOverlap = the fraction the circles' areas that are permitted to overlap
+     * @return True if the circles overlap
+     */
     public static boolean circlesIntersect(float x1, float y1, float x2, float y2, float r1, float r2, double amountOverlap) {
         float distSq = (float)(Math.pow(x1 - x2,2) + Math.pow(y1 - y2,2));
         float radSumSq = (float)Math.pow(r1 + r2,2);
@@ -310,8 +399,12 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         return distSq <= radSumSq && radSumSq - distSq >= radSumSq/(amountOverlap);
     }
 
+    /**
+     * Animates bubble2 to one of the corners of bubble1
+     * @param bubble1 first bubble
+     * @param bubble2 second bubble
+     */
     private void dodgeEachOther(View bubble1, View bubble2) {
-        bubble2.bringToFront();
         Rect bubble1Rect = new Rect();
         bubble1.getHitRect(bubble1Rect);
         Rect bubble2Rect = new Rect();
@@ -341,8 +434,14 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         }
     }
 
-    // takes in a bubble, scale size and shrinks/expands bubble to that scale. Also takes in a boolean
-    // for deleting, if true, calls method to remove the bubble from the screen after animating
+
+    /**
+     * Animates the scaleX and scaleY of bubble to finalScale. If bubble is being deleted, it is removed from the layout.
+     * If the bubble expanded it adds a balloon to bubble, and if it intersects with other bubbles, the overlapping bubbles move out of the way
+     * @param bubble The bubble to be scaled
+     * @param finalScale The final scale of bubble
+     * @param deleting True if bubble is being deleted
+     */
     private void animate(final View bubble, final float finalScale, final boolean deleting) {
         // Construct and run the parallel animation of the four translation and
         // scale properties (SCALE_X and SCALE_Y).
@@ -362,6 +461,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 if (deleting) {
                     ViewGroup parentView = (ViewGroup) bubble.getParent();
                     parentView.removeView(bubble);
+                    listOfExpandedBubbles.remove((Integer)bubble.getId());
                 }
                 else if (finalScale != 1f) {
                     for (View intersectingBubble : findIntersectingBubbles(bubble)) {
@@ -384,6 +484,13 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         currentAnimator = set;
     }
 
+    /**
+     * Animates the x and y positions of bubble to finalX and finalY. If the bubble now overlaps other bubbles,
+     * the other bubbles move out of the way, unless you're up against the wall
+     * @param bubble The bubble to animate
+     * @param finalX Final x position
+     * @param finalY Final y position
+     */
     private void animate(final View bubble, float finalX, float finalY) {
         final AnimatorSet set = new AnimatorSet();
         set
@@ -403,6 +510,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                             dodgeEachOther(bubble, intersectingBubble);
                     }
                     moveCount++;
+                    bubble.bringToFront();
                 }
 /*                if (listOfExpandedBubbles.contains(bubble.getId()))
                     addBalloon(bubble);*/
@@ -412,11 +520,46 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         set.start();
     }
 
+    /**
+     * When the delete button is clicked, a dialog asks for confirmation. Upon confirmation, all goals in the bubble and goalList fragments
+     * are cleared and the database is deleted.
+     * @param view The delete button
+     */
+    public void deleteAllGoals(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("This will delete all of your goals, including completed ones").setTitle("Delete all goals?");
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                goalById.clear();
+                dbHelper.getContext().deleteDatabase(dbHelper.getDatabaseName());
+                dbHelper.close();
+                bubbleFragment.resetBubbles();
+                goalListFragment.resetList();
+                bubbleFragment.setCurrentScale(1);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    /**
+     * Sets up the ViewPager that contains the bubble and goalList fragments and handles switching/swiping between them
+     * @param viewPager The current viewPager
+     */
     private void setupViewPager(ViewPager viewPager) {
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         bubbleFragment = new BubbleFragment();
+        goalListFragment = new GoalListFragment();
         adapter.addFragment(bubbleFragment);
-        adapter.addFragment(new GoalListFragment());
+        adapter.addFragment(goalListFragment);
         viewPager.setAdapter(adapter);
     }
 }

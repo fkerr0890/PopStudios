@@ -11,8 +11,12 @@ import android.provider.BaseColumns;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * A class that manages SQLite database operations and retrieves goals from the database
+ */
 public class FeedReaderDbHelper extends SQLiteOpenHelper {
     //Creates SQLite table
+    private final Context context;
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + FeedReaderContract.FeedEntry.TABLE_NAME + " (" +
                     FeedReaderContract.FeedEntry._ID + " INTEGER PRIMARY KEY," +
@@ -30,6 +34,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
 
     public FeedReaderDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     public void onCreate(SQLiteDatabase db) {
@@ -43,7 +48,10 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    //Iterates through SQLite table, using row information to create goals, returning a list of goals.
+    /**
+     * Iterates through SQLite table, using row information to create goals
+     * @return A list of goals containing information from the database
+     */
     public List<Goal> getGoalsFromDb() {
         // Reads database
         SQLiteDatabase db = this.getReadableDatabase();
@@ -86,5 +94,9 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return goals;
+    }
+
+    public Context getContext() {
+        return context;
     }
 }

@@ -8,6 +8,9 @@ import android.graphics.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A goal class
+ */
 public class Goal {
 
     // variables used in a goal
@@ -53,13 +56,19 @@ public class Goal {
         goalStatus = status;
     }
 
-    // use information from user for importance and difficulty to calculate radius
+    /**
+     * Use information from user for importance and difficulty to calculate radius
+     * @return The bubble radius
+     */
     public int calculateRadius(){
         float radius = (Math.round(MainActivity.screenWidth)/(1f/((this.goalImportance + this.goalDifficulty + 3f) * 0.015f)));
         return Math.round(radius);
     }
 
-    // use the sum of importance + difficulty to determine what color the bubble will be
+    /**
+     * Use the sum of importance + difficulty to determine what color the bubble will be
+     * @return the bubble color
+     */
     public int calculateColor(){
         int color11 = Color.argb(255, 116, 0, 184);
         int color10 = Color.argb(255, 110, 23, 190);

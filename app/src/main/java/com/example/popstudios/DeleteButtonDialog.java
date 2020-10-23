@@ -9,12 +9,16 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
+/**
+ * A custom dialog
+ */
 public class DeleteButtonDialog extends AppCompatDialogFragment {
     // creates listener to allow user to choose yes or cancel in dialog
     private DeleteButtonDialogListener listener;
@@ -24,29 +28,31 @@ public class DeleteButtonDialog extends AppCompatDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         MainActivity mainActivity = (MainActivity)getActivity();
         AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-        builder.setTitle("Complete/Delete Goal")
-                .setMessage("Do you want to complete or delete \"" + MainActivity.goalById.get((long)mainActivity.getDeleteView().getId()).getName()+"\"?")
-                // Closes window and does nothing when user clicks cancel
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        if (mainActivity != null) {
+            builder.setTitle("Complete/Delete Goal")
+                    .setMessage("Do you want to complete or delete \"" + Objects.requireNonNull(MainActivity.goalById.get((long) mainActivity.getDeleteView().getId())).getName() + "\"?")
+                    // Closes window and does nothing when user clicks cancel
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                })
-                // Calls listener onNeutralClicked
-                .setNeutralButton("Complete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        listener.onNeutralClicked();
-                    }
-                })
-                // Calls listener onYesClicked
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        listener.onYesClicked();
-                    }
-                });
+                        }
+                    })
+                    // Calls listener onNeutralClicked
+                    .setNeutralButton("Complete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            listener.onNeutralClicked();
+                        }
+                    })
+                    // Calls listener onYesClicked
+                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            listener.onYesClicked();
+                        }
+                    });
+        }
         return builder.create();
     }
 
